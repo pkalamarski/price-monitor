@@ -1,0 +1,6 @@
+.vscode
+node_modules
+.env
+generateCredentials.js
+credentials.json
+token.json

@@ -1,0 +1,21 @@
+{
+  "name": "price-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "cheerio": "^1.0.0-rc.3",
+    "dotenv": "^8.2.0",
+    "excel-column-name": "^1.0.1",
+    "express": "^4.17.1",
+    "googleapis": "^64.0.0",
+    "got": "^11.8.0",
+    "jsdom": "^16.4.0"
+  }
+}
