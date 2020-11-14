@@ -4,9 +4,9 @@ const cheerio = require("cheerio");
 const { logAction, getPageMapping } = require("./sheetDataHandling");
 
 const checkPrices = async (urls, sheets) => {
-  const mapping = await getPageMapping(sheets);
+  const start = new Date();
 
-  await logAction("Getting item prices", sheets);
+  const mapping = await getPageMapping(sheets);
 
   let prices = [];
 
@@ -42,6 +42,8 @@ const checkPrices = async (urls, sheets) => {
       price: parsePrice(rawPrice || "-"),
     });
   }
+
+  await logAction("[5/6] Get item prices", sheets, start);
 
   return prices;
 };

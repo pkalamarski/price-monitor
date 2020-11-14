@@ -1,7 +1,12 @@
 const Axios = require("axios");
 const { google } = require("googleapis");
 
-const { getItemUrls, writePrices, logAction } = require("./sheetDataHandling");
+const {
+  getItemUrls,
+  writePrices,
+  logAction,
+  logMultiple,
+} = require("./sheetDataHandling");
 const { addNewColumn, getNewColumnName } = require("./sheetSchemaHandling");
 const { checkPrices } = require("./dataHandling");
 
@@ -28,20 +33,17 @@ const initialize = async (auth) => {
 };
 
 const monitorPrices = async (sheets) => {
-  await logAction(null, sheets);
-  await logAction("JOB: Price checking job initiated", sheets);
+  await logMultiple([null, "JOB: Price checking job initiated"], sheets);
 
   const startTime = new Date();
 
-  const [newColumnName, urls] = await Promise.all([
-    getNewColumnName(sheets),
-    getItemUrls(sheets),
-  ]);
+  const newColumnName = await getNewColumnName(sheets);
 
-  const [prices] = await Promise.all([
-    checkPrices(urls, sheets),
-    addNewColumn(sheets),
-  ]);
+  const urls = await getItemUrls(sheets);
+
+  await addNewColumn(sheets);
+
+  const prices = await checkPrices(urls, sheets);
 
   await writePrices(sheets, prices, newColumnName);
 
@@ -57,26 +59,23 @@ const monitorPrices = async (sheets) => {
 };
 
 const initMsg = async (sheets) => {
-  await logAction(null, sheets);
-  await logAction(
-    `============== price-monitor v${VERSION} ==============`,
+  await logMultiple(
+    [
+      null,
+      `============== price-monitor v${VERSION} ==============`,
+      `CHECK_PRICE_INTERVAL: ${CHECK_PRICE_INTERVAL / 60 / 60 / 1000} hours`,
+      `CHECK_HEALTH_INTERVAL: ${CHECK_HEALTH_INTERVAL / 60 / 1000} minutes`,
+      null,
+    ],
     sheets
   );
-  await logAction(
-    `CHECK_PRICE_INTERVAL: ${CHECK_PRICE_INTERVAL / 60 / 60 / 1000} hours`,
-    sheets
-  );
-  await logAction(
-    `CHECK_HEALTH_INTERVAL: ${CHECK_HEALTH_INTERVAL / 60 / 1000} minutes`,
-    sheets
-  );
-  await logAction(null, sheets);
 };
 
 const monitorHealth = (sheets) => {
   setInterval(async () => {
+    const start = new Date();
     const { data } = await Axios.get(SERVER_URL);
-    await logAction(`Health check - ${data}`, sheets);
+    await logAction(`Health check - ${data}`, sheets, start);
   }, Number(CHECK_HEALTH_INTERVAL));
 };
 

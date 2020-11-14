@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { google } = require("googleapis");
 
-const { initialize } = require("./getPrices");
+const { initialize } = require("./initialize");
 
 const {
   CLIENT_ID,
