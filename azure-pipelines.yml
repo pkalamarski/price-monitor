@@ -37,7 +37,7 @@ steps:
     displayName: "Publish the artifacts"
     inputs:
       command: push
-      packagesToPush: "/home/vsts/work/1/a/priceMonitor.1.1.0-r.nupkg"
+      packagesToPush: "/home/vsts/work/1/a/priceMonitor.1.1.1.nupkg"
       nuGetFeedType: internal
       publishVstsFeed: "pkpkala"
       verbosityPush: "Detailed"

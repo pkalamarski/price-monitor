@@ -4,7 +4,7 @@ const { logAction } = require("./sheetDataHandling");
 const spreadsheetId = process.env.SPREADSHEET_ID;
 
 const getNewColumnName = async (sheets) => {
-  await logAction("Getting new column name", sheets);
+  const start = new Date();
 
   const {
     data: { sheets: spreadsheetSheets },
@@ -12,13 +12,15 @@ const getNewColumnName = async (sheets) => {
     spreadsheetId,
   });
 
+  await logAction(`[1/6] Get new column name`, sheets, start);
+
   return excelColumnName.intToExcelCol(
     spreadsheetSheets[0].properties.gridProperties.columnCount + 1
   );
 };
 
 const addNewColumn = async (sheets) => {
-  await logAction("Adding new data column", sheets);
+  const start = new Date();
 
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId,
@@ -33,6 +35,8 @@ const addNewColumn = async (sheets) => {
       ],
     },
   });
+
+  await logAction("[3/6] Add new data column", sheets, start);
 };
 
 exports.getNewColumnName = getNewColumnName;
