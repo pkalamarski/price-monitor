@@ -30,6 +30,10 @@ const checkPrices = async (urls, sheets) => {
 
     if (!siteMapping) {
       await logAction(`ERROR: No mapping for host: ${strippedHost}`, sheets);
+      prices.push({
+        url,
+        price: "?",
+      });
       continue;
     }
 

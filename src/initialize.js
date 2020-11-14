@@ -7,8 +7,8 @@ const {
   logAction,
   logMultiple,
 } = require("./sheetDataHandling");
-const { addNewColumn, getNewColumnName } = require("./sheetSchemaHandling");
 const { checkPrices } = require("./dataHandling");
+const { addNewColumn, getNewColumnName } = require("./sheetSchemaHandling");
 
 const {
   CHECK_PRICE_INTERVAL,
@@ -22,20 +22,20 @@ const initialize = async (auth) => {
 
   await initMsg(sheets);
 
-  await monitorPrices(sheets);
+  await getPrices(sheets);
 
   setInterval(
-    async () => await monitorPrices(sheets),
+    async () => await getPrices(sheets),
     Number(CHECK_PRICE_INTERVAL)
   );
 
   monitorHealth(sheets);
 };
 
-const monitorPrices = async (sheets) => {
-  await logMultiple([null, "JOB: Price checking job initiated"], sheets);
-
+const getPrices = async (sheets) => {
   const startTime = new Date();
+
+  await logMultiple([null, "JOB: Starting price check job"], sheets);
 
   const newColumnName = await getNewColumnName(sheets);
 
@@ -47,18 +47,19 @@ const monitorPrices = async (sheets) => {
 
   await writePrices(sheets, prices, newColumnName);
 
-  const elapsedSeconds = (new Date() - startTime) / 1000;
+  const validUrls = urls.filter((url) => url !== "-");
+  const elapsedSeconds = ((new Date() - startTime) / 1000).toFixed(1);
 
-  await logAction(
-    `SUCCESS: ${urls.length} prices checked in ${elapsedSeconds.toFixed(
-      1
-    )} seconds`,
+  await logMultiple(
+    [
+      `SUCCESS: ${validUrls.length} prices checked in ${elapsedSeconds} seconds`,
+      null,
+    ],
     sheets
   );
-  await logAction(null, sheets);
 };
 
-const initMsg = async (sheets) => {
+const initMsg = async (sheets) =>
   await logMultiple(
     [
       null,
@@ -69,14 +70,12 @@ const initMsg = async (sheets) => {
     ],
     sheets
   );
-};
 
-const monitorHealth = (sheets) => {
+const monitorHealth = (sheets) =>
   setInterval(async () => {
     const start = new Date();
     const { data } = await Axios.get(SERVER_URL);
     await logAction(`Health check - ${data}`, sheets, start);
   }, Number(CHECK_HEALTH_INTERVAL));
-};
 
 exports.initialize = initialize;
