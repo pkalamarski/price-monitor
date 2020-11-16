@@ -55,7 +55,9 @@ const checkPrices = async (urls, sheets) => {
 };
 
 const parsePrice = (price) =>
-  price === "-" ? price : parseFloat(price.replace(",", "."));
+  price === "-"
+    ? price
+    : parseFloat(price.replace(",", ".").replace(/[^0-9.]/g, ""));
 
 exports.checkPrices = checkPrices;
 exports.parsePrice = parsePrice;
