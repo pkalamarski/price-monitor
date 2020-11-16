@@ -6,7 +6,9 @@ const { logAction, getPageMapping } = require("./sheetDataHandling");
 const checkPrices = async (urls, sheets) => {
   const start = new Date();
 
+  const mappingStart = new Date();
   const mapping = await getPageMapping(sheets);
+  await logAction("[4/6] Get page mapping", sheets, mappingStart);
 
   let prices = [];
 
@@ -53,6 +55,7 @@ const checkPrices = async (urls, sheets) => {
 };
 
 const parsePrice = (price) =>
-  price === "-" ? price : parseFloat(price.replace(",", "."));
+  price === "-" ? price : parseFloat(price.replace(",", ".").replace("£", ""));
 
 exports.checkPrices = checkPrices;
+exports.parsePrice = parsePrice;

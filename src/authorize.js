@@ -1,7 +1,4 @@
-require("dotenv").config();
 const { google } = require("googleapis");
-
-const { initialize } = require("./initialize");
 
 const {
   CLIENT_ID,
@@ -27,7 +24,8 @@ const initializeAuth = () => {
   );
 
   oAuth2Client.setCredentials(token);
-  initialize(oAuth2Client);
+
+  return oAuth2Client;
 };
 
 exports.initializeAuth = initializeAuth;
