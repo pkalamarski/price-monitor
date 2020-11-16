@@ -44,8 +44,6 @@ const writePrices = async (sheets, prices, columnName) => {
 };
 
 const getPageMapping = async (sheets) => {
-  const start = new Date();
-
   const {
     data: { values },
   } = await sheets.spreadsheets.values.get({
@@ -59,8 +57,6 @@ const getPageMapping = async (sheets) => {
 
     return [...mapping, { host, selector, useHTML }];
   }, []);
-
-  await logAction("[4/6] Get page mapping", sheets, start);
 
   return mapping;
 };

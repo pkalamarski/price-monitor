@@ -8,6 +8,7 @@ const {
   logMultiple,
 } = require("./sheetDataHandling");
 const { checkPrices } = require("./dataHandling");
+const { initializeAuth } = require("./authorize");
 const { addNewColumn, getNewColumnName } = require("./sheetSchemaHandling");
 
 const {
@@ -17,7 +18,9 @@ const {
   VERSION,
 } = process.env;
 
-const initialize = async (auth) => {
+const initialize = async () => {
+  const auth = initializeAuth();
+
   const sheets = google.sheets({ version: "v4", auth });
 
   await initMsg(sheets);
