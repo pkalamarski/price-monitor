@@ -3,6 +3,12 @@
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
+variables:
+  - name: BuildNumber
+    value: $(Build.BuildId)
+  - name: PackagePath
+    value: "$(Build.ArtifactStagingDirectory)/price-monitor.$(BuildNumber).0.0.nupkg"
+
 trigger:
   - master
 
@@ -18,10 +24,12 @@ steps:
   - script: npm install
     displayName: "npm install"
 
+  # DEPLOYMENT STEPS
   - task: NuGetToolInstaller@0
     condition: "eq(variables['Build.SourceBranch'], 'refs/heads/master')"
     inputs:
       versionSpec: "5.4.0"
+
   - task: NuGetCommand@2
     condition: "eq(variables['Build.SourceBranch'], 'refs/heads/master')"
     displayName: "NuGet pack - pack the build files"
@@ -29,15 +37,20 @@ steps:
       command: pack
       name: BuildNumber
       packagesToPack: "**/*.nuspec"
+      versioningScheme: byEnvVar
+      versionEnvVar: BuildNumber
       toolPackage: true
       configuration: Release
       verbosityPack: "Detailed"
+
   - task: NuGetCommand@2
     condition: "eq(variables['Build.SourceBranch'], 'refs/heads/master')"
     displayName: "Publish the artifacts"
     inputs:
       command: push
-      packagesToPush: "/home/vsts/work/1/a/priceMonitor.1.1.4.nupkg"
+      packagesToPush: "$(PackagePath)"
       nuGetFeedType: internal
       publishVstsFeed: "pkpkala"
+      versioningScheme: byEnvVar
+      versionEnvVar: BuildNumber
       verbosityPush: "Detailed"
