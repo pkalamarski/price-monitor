@@ -52,9 +52,11 @@ const getPrices = async (sheets) => {
 
   const validUrls = urls.filter((url) => url !== "-");
   const elapsedSeconds = ((new Date() - startTime) / 1000).toFixed(1);
+  const { high, avg, low } = calculateAverageTime(prices);
 
   await logMultiple(
     [
+      `Fetch times: high: ${high}s, avg: ${avg}s, low: ${low}s`,
       `SUCCESS: ${validUrls.length} prices checked in ${elapsedSeconds} seconds`,
       null,
     ],
@@ -80,5 +82,17 @@ const monitorHealth = (sheets) =>
     const { data } = await Axios.get(SERVER_URL);
     await logAction(`Health check - ${data}`, sheets, start);
   }, Number(CHECK_HEALTH_INTERVAL));
+
+const calculateAverageTime = (prices) => {
+  const times = prices.map((p) => p.time).filter(Boolean);
+
+  const high = times.sort((a, b) => b - a)[0];
+  const avg = times.reduce((sum, t) => sum + t) / times.length;
+  const low = times.sort((a, b) => a - b)[0];
+
+  return { high: formatTime(high), avg: formatTime(avg), low: formatTime(low) };
+};
+
+const formatTime = (ms) => (ms / 1000).toFixed(2);
 
 exports.initialize = initialize;
