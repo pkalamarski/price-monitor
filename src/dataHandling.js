@@ -23,6 +23,8 @@ const checkPrices = async (urls, sheets) => {
   );
 
   for (url of urls) {
+    const index = urls.indexOf(url);
+
     if (checkpoints.includes(index)) {
       await logAction(
         `Checkpoint: ${(
@@ -42,8 +44,6 @@ const checkPrices = async (urls, sheets) => {
     }
 
     const itemStart = new Date();
-
-    const index = urls.indexOf(url);
 
     try {
       const page = await got(url);
@@ -95,7 +95,7 @@ const checkPrices = async (urls, sheets) => {
     }
   }
 
-  await logAction("[5/6] Get item prices", sheets, start);
+  await logAction("[5/6] Get item prices process finished", sheets, start);
 
   return prices;
 };
