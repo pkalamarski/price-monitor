@@ -7,7 +7,16 @@ import { parsePrice } from './dataHandling'
 import { logAction, logMultiple } from './logging'
 import { getPageMapping } from './sheetDataHandling'
 
-const checkMapping = async (url) => {
+interface IMappingCheck {
+  url: string
+  useHTML: boolean
+  rawPrice: string
+  formattedPrice: number
+  htmlPrice: string
+  textPrice: string
+}
+
+const checkMapping = async (url: string): Promise<IMappingCheck> => {
   const startTime = new Date()
   const auth = initializeAuth()
   const sheets = google.sheets({ version: 'v4', auth })
@@ -31,36 +40,34 @@ const checkMapping = async (url) => {
   if (!siteMapping) {
     await logAction(`ERROR: No mapping for host: ${strippedHost}`, sheets)
 
-    return {
-      error: `ERROR: No mapping for host: ${strippedHost}`
-    }
+    return null
   }
 
-  const { selector, useHTML } = siteMapping
+  // const { selector, useHTML } = siteMapping
 
-  const rawPrice = useHTML ? $(selector).html() : $(selector).text()
-  const elapsedSeconds = (
-    (new Date().getTime() - startTime.getTime()) /
-    1000
-  ).toFixed(1)
+  // const rawPrice = useHTML ? $(selector).html() : $(selector).text()
+  // const elapsedSeconds = (
+  //   calculateTimeDiff(new Date(), startTime) /
+  //   1000
+  // ).toFixed(1)
 
-  await logAction('[3/3] Parse page', sheets, parseStart)
-  await logMultiple(
-    [
-      `SUCCESS: Mapping for host ${strippedHost} checked in ${elapsedSeconds} seconds`,
-      null
-    ],
-    sheets
-  )
+  // await logAction('[3/3] Parse page', sheets, parseStart)
+  // await logMultiple(
+  //   [
+  //     `SUCCESS: Mapping for host ${strippedHost} checked in ${elapsedSeconds} seconds`,
+  //     null
+  //   ],
+  //   sheets
+  // )
 
-  return {
-    url,
-    useHTML,
-    rawPrice,
-    formattedPrice: parsePrice(rawPrice || '-'),
-    htmlPrice: $(selector).html(),
-    textPrice: $(selector).text()
-  }
+  // return {
+  //   url,
+  //   useHTML,
+  //   rawPrice,
+  //   formattedPrice: parsePrice(rawPrice || '-'),
+  //   htmlPrice: $(selector).html(),
+  //   textPrice: $(selector).text()
+  // }
 }
 
 export default checkMapping

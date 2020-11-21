@@ -1,10 +1,13 @@
 import { intToExcelCol } from 'excel-column-name'
+import { sheets_v4 } from 'googleapis'
 
 import { logAction } from './logging'
 
 const spreadsheetId = process.env.SPREADSHEET_ID
 
-export const getNewColumnName = async (sheets) => {
+export const getNewColumnName = async (
+  sheets: sheets_v4.Sheets
+): Promise<string> => {
   const start = new Date()
 
   const {
@@ -20,7 +23,7 @@ export const getNewColumnName = async (sheets) => {
   )
 }
 
-export const addNewColumn = async (sheets) => {
+export const addNewColumn = async (sheets: sheets_v4.Sheets) => {
   const start = new Date()
 
   await sheets.spreadsheets.batchUpdate({

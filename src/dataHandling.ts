@@ -1,10 +1,11 @@
 import got from 'got'
 import cheerio from 'cheerio'
+import { sheets_v4 } from 'googleapis'
 
-import { getPageMapping } from './sheetDataHandling'
-import { logAction, logMultiple } from './logging'
+import { calculateTimeDiff, logAction, logMultiple } from './logging'
+import { getPageMapping, IPrice } from './sheetDataHandling'
 
-export const checkPrices = async (urls, sheets) => {
+export const checkPrices = async (urls: string[], sheets: sheets_v4.Sheets) => {
   const start = new Date()
 
   const mappingStart = new Date()
@@ -13,7 +14,7 @@ export const checkPrices = async (urls, sheets) => {
 
   await logAction('[5/7] Get item prices process started', sheets)
 
-  let prices = []
+  let prices: IPrice[] = []
 
   const checkpoints = [0.2, 0.4, 0.6, 0.8, 1].map((p) =>
     Math.floor(p * urls.length)
@@ -71,14 +72,13 @@ export const checkPrices = async (urls, sheets) => {
         url,
         preDiscount: parsePrice(rawPreDiscountPrice || '-'),
         price: parsePrice(rawPrice || '-'),
-        time: new Date().getTime() - itemStart.getTime()
+        time: calculateTimeDiff({ start: itemStart })
       })
     } catch (e) {
       await logMultiple(
         [
           `ERROR: Cannot fetch price after ${(
-            (new Date().getTime() - itemStart.getTime()) /
-            1000
+            calculateTimeDiff({ start: itemStart }) / 1000
           ).toFixed()} seconds`,
           `ERROR: URL: ${url}`,
           `ERROR: Name: ${e.name}`,
@@ -90,7 +90,7 @@ export const checkPrices = async (urls, sheets) => {
       prices.push({
         url,
         price: '?',
-        time: new Date().getTime() - itemStart.getTime()
+        time: calculateTimeDiff({ start: itemStart })
       })
     }
   }

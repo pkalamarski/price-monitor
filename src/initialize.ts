@@ -1,11 +1,22 @@
 import Axios from 'axios'
-import { google } from 'googleapis'
+import { google, sheets_v4 } from 'googleapis'
 
 import initializeAuth from './authorize'
 import { checkPrices } from './dataHandling'
-import { getItemUrls, writePrices } from './sheetDataHandling'
 import { addNewColumn, getNewColumnName } from './sheetSchemaHandling'
-import { logAction, logMultiple, generateReport, formatDate } from './logging'
+import { getItemUrls, IPrice, writePrices } from './sheetDataHandling'
+import {
+  logAction,
+  logMultiple,
+  generateReport,
+  formatDate,
+  calculateTimeDiff
+} from './logging'
+
+interface ILaunchTime {
+  launchIn: number
+  launchDate: string
+}
 
 const {
   CHECK_PRICE_INTERVAL,
@@ -37,13 +48,13 @@ const initialize = async () => {
         Number(CHECK_PRICE_INTERVAL)
       )
     },
-    ENV === 'prod' ? launchIn : 1
+    ENV === 'prod' ? launchIn : 0
   )
 
   monitorHealth(sheets)
 }
 
-const getPrices = async (sheets) => {
+const getPrices = async (sheets: sheets_v4.Sheets) => {
   const startTime = new Date()
 
   await logMultiple([null, 'JOB: Starting price check job'], sheets)
@@ -62,8 +73,7 @@ const getPrices = async (sheets) => {
 
   const validUrls = urls.filter((url) => url !== '-')
   const elapsedSeconds = (
-    (new Date().getTime() - startTime.getTime()) /
-    1000
+    calculateTimeDiff({ start: startTime }) / 1000
   ).toFixed(1)
   const { high, avg, low } = calculateAverageTime(prices)
 
@@ -77,7 +87,7 @@ const getPrices = async (sheets) => {
   )
 }
 
-const calculateLaunchTime = () => {
+const calculateLaunchTime = (): ILaunchTime => {
   const runTimes = [1, 5, 9, 13, 17, 21].map((hour) =>
     new Date().setHours(hour, 2, 0)
   )
@@ -89,7 +99,7 @@ const calculateLaunchTime = () => {
   return { launchIn, launchDate }
 }
 
-const initMsg = async (sheets) =>
+const initMsg = async (sheets: sheets_v4.Sheets) =>
   await logMultiple(
     [
       null,
@@ -105,14 +115,14 @@ const initMsg = async (sheets) =>
     sheets
   )
 
-const monitorHealth = (sheets) =>
+const monitorHealth = (sheets: sheets_v4.Sheets) =>
   setInterval(async () => {
     const start = new Date()
     const { data } = await Axios.get(SERVER_URL)
     await logAction(`Health check - ${data}`, sheets, start)
   }, Number(CHECK_HEALTH_INTERVAL))
 
-const calculateAverageTime = (prices) => {
+const calculateAverageTime = (prices: IPrice[]) => {
   const times = prices.map((p) => p.time).filter(Boolean)
 
   const high = times.sort((a, b) => b - a)[0]
@@ -122,6 +132,6 @@ const calculateAverageTime = (prices) => {
   return { high: formatTime(high), avg: formatTime(avg), low: formatTime(low) }
 }
 
-const formatTime = (ms) => (ms / 1000).toFixed(2)
+const formatTime = (ms: number) => (ms / 1000).toFixed(2)
 
 export default initialize
