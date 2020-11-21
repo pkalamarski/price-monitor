@@ -1,14 +1,10 @@
 const Axios = require("axios");
 const { google } = require("googleapis");
 
-const {
-  getItemUrls,
-  writePrices,
-  logAction,
-  logMultiple,
-} = require("./sheetDataHandling");
 const { checkPrices } = require("./dataHandling");
 const { initializeAuth } = require("./authorize");
+const { logAction, logMultiple, generateReport } = require("./logging");
+const { getItemUrls, writePrices } = require("./sheetDataHandling");
 const { addNewColumn, getNewColumnName } = require("./sheetSchemaHandling");
 
 const {
@@ -50,13 +46,15 @@ const getPrices = async (sheets) => {
 
   await writePrices(sheets, prices, newColumnName);
 
+  await generateReport(prices, sheets);
+
   const validUrls = urls.filter((url) => url !== "-");
   const elapsedSeconds = ((new Date() - startTime) / 1000).toFixed(1);
   const { high, avg, low } = calculateAverageTime(prices);
 
   await logMultiple(
     [
-      `Fetch times: high: ${high}s, avg: ${avg}s, low: ${low}s`,
+      `Time report: high: ${high}s, avg: ${avg}s, low: ${low}s`,
       `SUCCESS: ${validUrls.length} prices checked in ${elapsedSeconds} seconds`,
       null,
     ],

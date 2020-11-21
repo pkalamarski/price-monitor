@@ -1,5 +1,5 @@
 const excelColumnName = require("excel-column-name");
-const { logAction } = require("./sheetDataHandling");
+const { logAction } = require("./logging");
 
 const spreadsheetId = process.env.SPREADSHEET_ID;
 
@@ -12,7 +12,7 @@ const getNewColumnName = async (sheets) => {
     spreadsheetId,
   });
 
-  await logAction(`[1/6] Get new column name`, sheets, start);
+  await logAction(`[1/7] Get new column name`, sheets, start);
 
   return excelColumnName.intToExcelCol(
     spreadsheetSheets[0].properties.gridProperties.columnCount + 1
@@ -36,7 +36,7 @@ const addNewColumn = async (sheets) => {
     },
   });
 
-  await logAction("[3/6] Add new data column", sheets, start);
+  await logAction("[3/7] Add new data column", sheets, start);
 };
 
 exports.getNewColumnName = getNewColumnName;

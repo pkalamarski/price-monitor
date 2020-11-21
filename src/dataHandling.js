@@ -1,36 +1,28 @@
 const got = require("got");
 const cheerio = require("cheerio");
 
-const {
-  logAction,
-  getPageMapping,
-  logMultiple,
-} = require("./sheetDataHandling");
+const { getPageMapping } = require("./sheetDataHandling");
+const { logAction, logMultiple } = require("./logging");
 
 const checkPrices = async (urls, sheets) => {
   const start = new Date();
 
   const mappingStart = new Date();
   const mapping = await getPageMapping(sheets);
-  await logAction("[4/6] Get page mapping", sheets, mappingStart);
+  await logAction("[4/7] Get page mapping", sheets, mappingStart);
 
-  await logAction("[5/6] Get item prices process started", sheets);
+  await logAction("[5/7] Get item prices process started", sheets);
 
   let prices = [];
 
-  const checkpoints = [0.25, 0.5, 0.75, 1].map((p) =>
-    Math.round(p * urls.length)
+  const checkpoints = [0.2, 0.4, 0.6, 0.8, 1].map((p) =>
+    Math.floor(p * urls.length)
   );
 
-  for (url of urls) {
-    const index = urls.indexOf(url);
-
-    if (checkpoints.includes(index)) {
+  for ([index, url] of urls.entries()) {
+    if (checkpoints.includes(index + 1)) {
       await logAction(
-        `Checkpoint: ${(
-          (index / urls.length) *
-          100
-        ).toFixed()}% prices checked`,
+        `Checkpoint: ${index + 1} of ${urls.length} prices checked`,
         sheets
       );
     }
@@ -64,12 +56,20 @@ const checkPrices = async (urls, sheets) => {
         continue;
       }
 
-      const { selector, useHTML } = siteMapping;
+      const { preDiscountSelector, priceSelector, useHTML } = siteMapping;
 
-      const rawPrice = useHTML ? $(selector).html() : $(selector).text();
+      const name = $("meta[property='og:title']").attr("content");
+      const rawPreDiscountPrice = useHTML
+        ? $(preDiscountSelector).html()
+        : $(preDiscountSelector).text();
+      const rawPrice = useHTML
+        ? $(priceSelector).html()
+        : $(priceSelector).text();
 
       prices.push({
+        name,
         url,
+        preDiscount: parsePrice(rawPreDiscountPrice || "-"),
         price: parsePrice(rawPrice || "-"),
         time: new Date() - itemStart,
       });
@@ -95,13 +95,13 @@ const checkPrices = async (urls, sheets) => {
     }
   }
 
-  await logAction("[5/6] Get item prices process finished", sheets, start);
+  await logAction("[5/7] Get item prices process finished", sheets, start);
 
   return prices;
 };
 
 const parsePrice = (price) =>
-  price === "-" ? price : parseFloat(price.replace(",", ".").replace("£", ""));
+  price === "-" ? price : parseFloat(price.replace(",", "."));
 
 exports.checkPrices = checkPrices;
 exports.parsePrice = parsePrice;
