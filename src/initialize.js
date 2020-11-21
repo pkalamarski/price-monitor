@@ -76,7 +76,7 @@ const getPrices = async (sheets) => {
 };
 
 const calculateLaunchTime = () => {
-  const runTimes = [2, 6, 10, 14, 18, 22].map((hour) =>
+  const runTimes = [1, 5, 9, 13, 17, 21].map((hour) =>
     new Date().setHours(hour, 2, 0)
   );
 
