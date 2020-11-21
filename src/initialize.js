@@ -3,7 +3,12 @@ const { google } = require("googleapis");
 
 const { checkPrices } = require("./dataHandling");
 const { initializeAuth } = require("./authorize");
-const { logAction, logMultiple, generateReport } = require("./logging");
+const {
+  logAction,
+  logMultiple,
+  generateReport,
+  formatDate,
+} = require("./logging");
 const { getItemUrls, writePrices } = require("./sheetDataHandling");
 const { addNewColumn, getNewColumnName } = require("./sheetSchemaHandling");
 
@@ -21,12 +26,20 @@ const initialize = async () => {
 
   await initMsg(sheets);
 
-  await getPrices(sheets);
+  const { launchIn, launchDate } = calculateLaunchTime();
 
-  setInterval(
-    async () => await getPrices(sheets),
-    Number(CHECK_PRICE_INTERVAL)
-  );
+  if (launchDate) {
+    await logAction(`Monitor will start at ${launchDate}`, sheets);
+  }
+
+  setTimeout(async () => {
+    await getPrices(sheets);
+
+    setInterval(
+      async () => await getPrices(sheets),
+      Number(CHECK_PRICE_INTERVAL)
+    );
+  }, launchIn);
 
   monitorHealth(sheets);
 };
@@ -60,6 +73,18 @@ const getPrices = async (sheets) => {
     ],
     sheets
   );
+};
+
+const calculateLaunchTime = () => {
+  const runTimes = [2, 6, 10, 14, 18, 22].map((hour) =>
+    new Date().setHours(hour, 2, 0)
+  );
+
+  const nearestDate = runTimes.find((date) => date - new Date() > 0);
+
+  const launchIn = nearestDate ? nearestDate - new Date() : 0;
+  const launchDate = nearestDate && formatDate(new Date(nearestDate));
+  return { launchIn, launchDate };
 };
 
 const initMsg = async (sheets) =>

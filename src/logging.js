@@ -8,10 +8,7 @@ const logAction = async (message, sheets, startDate = null) => {
     range: `Log!A1:B1`,
     resource: {
       values: [
-        [
-          new Date().toLocaleString("en-GB", { timeZone: "Europe/Warsaw" }),
-          message ? `${message}${timeElapsed}` : "",
-        ],
+        [formatDate(new Date()), message ? `${message}${timeElapsed}` : ""],
       ],
     },
     valueInputOption: "RAW",
@@ -19,9 +16,7 @@ const logAction = async (message, sheets, startDate = null) => {
 };
 
 const logMultiple = async (messages = [], sheets) => {
-  const date = new Date().toLocaleString("en-GB", {
-    timeZone: "Europe/Warsaw",
-  });
+  const date = formatDate(new Date());
 
   const values = messages.map((msg) => [date, msg || ""]);
 
@@ -37,9 +32,7 @@ const logMultiple = async (messages = [], sheets) => {
 
 const generateReport = async (prices, sheets) => {
   const start = new Date();
-  const parsedDate = start.toLocaleString("en-GB", {
-    timeZone: "Europe/Warsaw",
-  });
+  const parsedDate = formatDate(start);
 
   const priceReport = prices
     .filter((item) => item.url !== "-")
@@ -70,6 +63,12 @@ const generateReport = async (prices, sheets) => {
   await logAction("[7/7] Generate report", sheets, start);
 };
 
+const formatDate = (date) =>
+  date?.toLocaleString("en-GB", {
+    timeZone: "Europe/Warsaw",
+  });
+
 exports.logAction = logAction;
 exports.logMultiple = logMultiple;
 exports.generateReport = generateReport;
+exports.formatDate = formatDate;
