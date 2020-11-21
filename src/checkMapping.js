@@ -2,13 +2,10 @@ const got = require("got");
 const cheerio = require("cheerio");
 const { google } = require("googleapis");
 
-const {
-  logAction,
-  getPageMapping,
-  logMultiple,
-} = require("./sheetDataHandling");
 const { parsePrice } = require("./dataHandling");
 const { initializeAuth } = require("./authorize");
+const { logAction, logMultiple } = require("./logging");
+const { getPageMapping } = require("./sheetDataHandling");
 
 const checkMapping = async (url) => {
   const startTime = new Date();
