@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "ts-node .",
-    "build": "parcel build app.ts --target node --out-dir dist"
+    "start": "node ./dist/app.js",
+    "build": "parcel build app.ts --target node --out-dir dist",
+    "serve": "nodemon"
   },
   "author": "",
   "license": "ISC",
