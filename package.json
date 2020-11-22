@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "node ./dist/app.js",
+    "start": "node app.js",
     "build": "parcel build app.ts --target node --out-dir dist",
     "serve": "nodemon"
   },
