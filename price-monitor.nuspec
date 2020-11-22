@@ -12,5 +12,6 @@
     <files>
         <file src=".\dist\**\*" target=""/>
         <file src=".\node_modules\**\*" target="node_modules" />
+        <file src=".\package.json" target=""/>
     </files>
 </package>
