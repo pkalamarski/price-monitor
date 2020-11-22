@@ -11,6 +11,6 @@
     </metadata>
     <files>
         <file src=".\dist\**\*" target=""/>
-        <file src=".\packages\server\node_modules\**\*" target="node_modules" exclude=".\packages\server\node_modules\@types\**\*;.\packages\server\node_modules\.bin\*" />
+        <file src=".\node_modules\**\*" target="node_modules" exclude=".\packages\server\node_modules\@types\**\*;.\packages\server\node_modules\.bin\*" />
     </files>
 </package>
