@@ -1,7 +1,14 @@
 import { sheets_v4 } from 'googleapis'
 import { IPrice } from './sheetDataHandling'
 
-type ReportRow = [string, string, number, number | string, number, string]
+type ReportRow = [
+  string,
+  string,
+  string | number,
+  string | number,
+  number,
+  string
+]
 
 interface ICalculateDiffParams {
   start: Date
@@ -25,9 +32,9 @@ export const logAction = async (
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
+    range: 'Log!A1:B1',
     requestBody: {
-      values,
-      range: 'Log!A1:B1'
+      values
     },
     valueInputOption: 'RAW'
   })
@@ -43,9 +50,9 @@ export const logMultiple = async (
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
+    range: 'Log!A1:B1',
     requestBody: {
-      values,
-      range: 'Log!A1:B1'
+      values
     },
     valueInputOption: 'RAW'
   })
@@ -77,9 +84,9 @@ export const generateReport = async (
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
+    range: `Report!A1:F1`,
     requestBody: {
-      values,
-      range: `Report!A1:F1`
+      values
     },
     valueInputOption: 'RAW'
   })

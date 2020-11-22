@@ -4,16 +4,22 @@ import { google } from 'googleapis'
 
 import initializeAuth from './authorize'
 import { parsePrice } from './dataHandling'
-import { logAction, logMultiple } from './logging'
+import { calculateTimeDiff, logAction, logMultiple } from './logging'
 import { getPageMapping } from './sheetDataHandling'
+
+interface IPriceSet {
+  htmlPrice: string
+  textPrice: string
+  formattedHtmlPrice: string | number
+  formattedTextPrice: string | number
+}
 
 interface IMappingCheck {
   url: string
-  useHTML: boolean
-  rawPrice: string
-  formattedPrice: number
-  htmlPrice: string
-  textPrice: string
+  name: string
+
+  currentPrice: IPriceSet
+  preDiscountPrice: IPriceSet
 }
 
 const checkMapping = async (url: string): Promise<IMappingCheck> => {
@@ -21,7 +27,7 @@ const checkMapping = async (url: string): Promise<IMappingCheck> => {
   const auth = initializeAuth()
   const sheets = google.sheets({ version: 'v4', auth })
 
-  await logMultiple([null, 'JOB: Starting check mapping job'], sheets)
+  await logMultiple([null, 'JOB: Check mapping'], sheets)
 
   const mappingStart = new Date()
   const mapping = await getPageMapping(sheets)
@@ -43,31 +49,43 @@ const checkMapping = async (url: string): Promise<IMappingCheck> => {
     return null
   }
 
-  // const { selector, useHTML } = siteMapping
+  const { preDiscountSelector, priceSelector } = siteMapping
 
-  // const rawPrice = useHTML ? $(selector).html() : $(selector).text()
-  // const elapsedSeconds = (
-  //   calculateTimeDiff(new Date(), startTime) /
-  //   1000
-  // ).toFixed(1)
+  const htmlPrice = $(priceSelector).html()
+  const textPrice = $(priceSelector).text()
 
-  // await logAction('[3/3] Parse page', sheets, parseStart)
-  // await logMultiple(
-  //   [
-  //     `SUCCESS: Mapping for host ${strippedHost} checked in ${elapsedSeconds} seconds`,
-  //     null
-  //   ],
-  //   sheets
-  // )
+  const htmlPreDiscount = $(preDiscountSelector).html()
+  const textPreDiscount = $(preDiscountSelector).text()
 
-  // return {
-  //   url,
-  //   useHTML,
-  //   rawPrice,
-  //   formattedPrice: parsePrice(rawPrice || '-'),
-  //   htmlPrice: $(selector).html(),
-  //   textPrice: $(selector).text()
-  // }
+  const elapsedSeconds = (
+    calculateTimeDiff({ start: startTime }) / 1000
+  ).toFixed(1)
+
+  await logAction('[3/3] Parse page', sheets, parseStart)
+  await logMultiple(
+    [
+      `SUCCESS: Mapping for host ${strippedHost} checked in ${elapsedSeconds} seconds`,
+      null
+    ],
+    sheets
+  )
+
+  return {
+    url,
+    name: $("meta[property='og:title']").attr('content'),
+    currentPrice: {
+      htmlPrice,
+      textPrice,
+      formattedHtmlPrice: parsePrice(htmlPrice),
+      formattedTextPrice: parsePrice(textPrice)
+    },
+    preDiscountPrice: {
+      htmlPrice: htmlPreDiscount,
+      textPrice: textPreDiscount,
+      formattedHtmlPrice: parsePrice(htmlPreDiscount),
+      formattedTextPrice: parsePrice(textPreDiscount)
+    }
+  }
 }
 
 export default checkMapping

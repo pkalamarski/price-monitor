@@ -18,7 +18,7 @@ app.get('/check-mapping', async (req, res) => {
     return
   }
 
-  const results = await checkMapping(req.query.url)
+  const results = await checkMapping(req.query.url as string)
 
   res.setHeader('Content-Type', 'application/json')
   res.send(JSON.stringify(results, null, 2))

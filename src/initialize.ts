@@ -48,7 +48,7 @@ const initialize = async () => {
         Number(CHECK_PRICE_INTERVAL)
       )
     },
-    ENV === 'prod' ? launchIn : 0
+    ENV !== 'dev' ? launchIn : 0
   )
 
   monitorHealth(sheets)
@@ -57,7 +57,7 @@ const initialize = async () => {
 const getPrices = async (sheets: sheets_v4.Sheets) => {
   const startTime = new Date()
 
-  await logMultiple([null, 'JOB: Starting price check job'], sheets)
+  await logMultiple([null, 'JOB: Price check'], sheets)
 
   const newColumnName = await getNewColumnName(sheets)
 

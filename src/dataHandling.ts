@@ -100,5 +100,12 @@ export const checkPrices = async (urls: string[], sheets: sheets_v4.Sheets) => {
   return prices
 }
 
-export const parsePrice = (price) =>
-  price === '-' ? price : parseFloat(price.replace(',', '.'))
+export const parsePrice = (price: string): string | number => {
+  const strippedPrice = price
+    ?.split('zł')[0]
+    .replace(/[^0-9.,-]+/g, '')
+    .replace(',', '.')
+    .replace('.-', '')
+
+  return price === '-' ? price : Number(strippedPrice) || '?'
+}

@@ -7,7 +7,7 @@ export interface IPrice {
   price: number | string
 
   name?: string
-  preDiscount?: number
+  preDiscount?: number | string
   time?: number
 }
 
@@ -53,7 +53,8 @@ export const writePrices = async (
 
   await sheets.spreadsheets.values.update({
     spreadsheetId,
-    requestBody: { values, range: `${columnName}1` },
+    range: `${columnName}1`,
+    requestBody: { values },
     valueInputOption: 'RAW'
   })
 
