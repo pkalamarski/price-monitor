@@ -6,7 +6,9 @@ type ReportRow = [
   string,
   string | number,
   string | number,
+  string | number,
   number,
+  boolean,
   string
 ]
 
@@ -60,7 +62,8 @@ export const logMultiple = async (
 
 export const generateReport = async (
   prices: IPrice[],
-  sheets: sheets_v4.Sheets
+  sheets: sheets_v4.Sheets,
+  skipWrite: boolean
 ) => {
   const start = new Date()
   const parsedDate = formatDate(start)
@@ -70,14 +73,16 @@ export const generateReport = async (
     .map((item) => [
       item.name,
       item.url,
+      item.oldPrice,
       item.preDiscount,
-      item.price,
+      item.newPrice,
       item.time,
+      skipWrite,
       parsedDate
     ])
 
   const values = [
-    ['||', '||', '||', '||', '||', '||'],
+    ['||', '||', '||', '||', '||', '||', '||', '||'],
     [`========== Detailed job report from ${parsedDate} ==========`],
     ...priceReport
   ]

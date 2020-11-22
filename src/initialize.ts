@@ -3,8 +3,8 @@ import { google, sheets_v4 } from 'googleapis'
 
 import initializeAuth from './authorize'
 import { checkPrices } from './dataHandling'
-import { addNewColumn, getNewColumnName } from './sheetSchemaHandling'
-import { getItemUrls, IPrice, writePrices } from './sheetDataHandling'
+import { addNewColumn, getColumnNames } from './sheetSchemaHandling'
+import { getItems, IPrice, writePrices } from './sheetDataHandling'
 import {
   logAction,
   logMultiple,
@@ -41,37 +41,49 @@ const initialize = async () => {
 
   setTimeout(
     async () => {
-      await getPrices(sheets)
+      await getPrices(sheets, false)
 
       setInterval(
-        async () => await getPrices(sheets),
+        async () => await getPrices(sheets, false),
         Number(CHECK_PRICE_INTERVAL)
       )
     },
     ENV !== 'dev' ? launchIn : 0
   )
 
-  monitorHealth(sheets)
+  ENV !== 'dev' && monitorHealth(sheets)
 }
 
-const getPrices = async (sheets: sheets_v4.Sheets) => {
+const getPrices = async (sheets: sheets_v4.Sheets, silentRun: boolean) => {
   const startTime = new Date()
 
-  await logMultiple([null, 'JOB: Price check'], sheets)
+  await logMultiple(
+    [null, `JOB: ${silentRun ? 'Silent price' : 'Price'} check`],
+    sheets
+  )
 
-  const newColumnName = await getNewColumnName(sheets)
+  const { lastColumnName, newColumnName } = await getColumnNames(sheets)
 
-  const urls = await getItemUrls(sheets)
+  const items = await getItems(sheets, lastColumnName)
 
-  await addNewColumn(sheets)
+  const prices = await checkPrices(items, sheets)
 
-  const prices = await checkPrices(urls, sheets)
+  const skipWrite =
+    prices.every((item) => item.oldPrice === item.newPrice) && silentRun
 
-  await writePrices(sheets, prices, newColumnName)
+  if (skipWrite) {
+    await logAction(
+      'No price changes detected - data will not be saved',
+      sheets
+    )
+  } else {
+    await addNewColumn(sheets)
+    await writePrices(sheets, prices, newColumnName)
+  }
 
-  await generateReport(prices, sheets)
+  await generateReport(prices, sheets, skipWrite)
 
-  const validUrls = urls.filter((url) => url !== '-')
+  const validUrls = items.filter((item) => item.url !== '-')
   const elapsedSeconds = (
     calculateTimeDiff({ start: startTime }) / 1000
   ).toFixed(1)
@@ -89,7 +101,7 @@ const getPrices = async (sheets: sheets_v4.Sheets) => {
 
 const calculateLaunchTime = (): ILaunchTime => {
   const runTimes = [1, 5, 9, 13, 17, 21].map((hour) =>
-    new Date().setHours(hour, 2, 0)
+    new Date().setUTCHours(hour, 2, 0)
   )
 
   const nearestDate = runTimes.find((date) => date - new Date().getTime() > 0)

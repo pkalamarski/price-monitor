@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "strict": false,
     "moduleResolution": "node",
@@ -12,6 +11,8 @@
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
     "skipLibCheck": true,
+    "outDir": "dist",
+    "lib": ["es2019", "DOM"]
   },
   "exclude": ["node_modules"]
 }
