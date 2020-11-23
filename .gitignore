@@ -1,6 +1,8 @@
 .vscode
-node_modules
+.cache
 .env
+node_modules
+dist
 generateCredentials.js
 credentials.json
 token.json

@@ -4,7 +4,9 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "ts-node ."
+    "start": "node app.js",
+    "build": "parcel build app.ts --target node --out-dir dist",
+    "serve": "nodemon"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +19,8 @@
     "googleapis": "^64.0.0",
     "got": "^11.8.0",
     "jsdom": "^16.4.0",
+    "nodemon": "^2.0.6",
+    "parcel": "^1.12.4",
     "ts-node": "^9.0.0",
     "typescript": "^4.1.2"
   },

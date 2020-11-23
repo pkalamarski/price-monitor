@@ -27,7 +27,7 @@ const checkMapping = async (url: string): Promise<IMappingCheck> => {
   const auth = initializeAuth()
   const sheets = google.sheets({ version: 'v4', auth })
 
-  await logMultiple([null, 'JOB: Check mapping'], sheets)
+  await logMultiple([null, 'JOB: Mapping check'], sheets)
 
   const mappingStart = new Date()
   const mapping = await getPageMapping(sheets)

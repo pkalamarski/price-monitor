@@ -2,36 +2,40 @@ import got from 'got'
 import cheerio from 'cheerio'
 import { sheets_v4 } from 'googleapis'
 
+import { getPageMapping, IItem, IPrice } from './sheetDataHandling'
 import { calculateTimeDiff, logAction, logMultiple } from './logging'
-import { getPageMapping, IPrice } from './sheetDataHandling'
 
-export const checkPrices = async (urls: string[], sheets: sheets_v4.Sheets) => {
+export const checkPrices = async (items: IItem[], sheets: sheets_v4.Sheets) => {
   const start = new Date()
 
   const mappingStart = new Date()
   const mapping = await getPageMapping(sheets)
-  await logAction('[4/7] Get page mapping', sheets, mappingStart)
+  await logAction('[3/7] Get page mapping', sheets, mappingStart)
 
-  await logAction('[5/7] Get item prices process started', sheets)
+  await logAction('[4/7] Get item prices process started', sheets)
 
   let prices: IPrice[] = []
 
   const checkpoints = [0.2, 0.4, 0.6, 0.8, 1].map((p) =>
-    Math.floor(p * urls.length)
+    Math.floor(p * items.length)
   )
 
-  for (let [index, url] of urls.entries()) {
+  for (let item of items) {
+    const { id: itemId, index, url, price: lastPrice } = item
+
     if (checkpoints.includes(index + 1)) {
       await logAction(
-        `Checkpoint: ${index + 1} of ${urls.length} prices checked`,
+        `Checkpoint: ${index + 1} of ${items.length} prices checked`,
         sheets
       )
     }
 
     if (url === '-') {
       prices.push({
+        itemId,
         url: '-',
-        price: ' '
+        oldPrice: ' ',
+        newPrice: ' '
       })
       continue
     }
@@ -51,8 +55,10 @@ export const checkPrices = async (urls: string[], sheets: sheets_v4.Sheets) => {
       if (!siteMapping) {
         await logAction(`ERROR: No mapping for host: ${strippedHost}`, sheets)
         prices.push({
+          itemId,
           url,
-          price: '?'
+          oldPrice: ' ',
+          newPrice: '?'
         })
         continue
       }
@@ -63,17 +69,21 @@ export const checkPrices = async (urls: string[], sheets: sheets_v4.Sheets) => {
       const rawPreDiscountPrice = useHTML
         ? $(preDiscountSelector).html()
         : $(preDiscountSelector).text()
-      const rawPrice = useHTML
+      const rawNewPrice = useHTML
         ? $(priceSelector).html()
         : $(priceSelector).text()
 
-      prices.push({
+      const priceData: IPrice = {
+        itemId,
         name,
         url,
-        preDiscount: parsePrice(rawPreDiscountPrice || '-'),
-        price: parsePrice(rawPrice || '-'),
+        oldPrice: lastPrice,
+        preDiscount: rawNewPrice ? parsePrice(rawPreDiscountPrice || '-') : '-',
+        newPrice: parsePrice(rawNewPrice || '-'),
         time: calculateTimeDiff({ start: itemStart })
-      })
+      }
+
+      prices.push(priceData)
     } catch (e) {
       await logMultiple(
         [
@@ -88,14 +98,16 @@ export const checkPrices = async (urls: string[], sheets: sheets_v4.Sheets) => {
       )
       console.error(e)
       prices.push({
+        itemId,
         url,
-        price: '?',
+        oldPrice: lastPrice,
+        newPrice: '?',
         time: calculateTimeDiff({ start: itemStart })
       })
     }
   }
 
-  await logAction('[5/7] Get item prices process finished', sheets, start)
+  await logAction('[4/7] Get item prices process finished', sheets, start)
 
   return prices
 }

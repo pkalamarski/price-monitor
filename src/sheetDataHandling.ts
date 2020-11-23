@@ -2,9 +2,19 @@ import { sheets_v4 } from 'googleapis'
 
 import { logAction } from './logging'
 
-export interface IPrice {
+export interface IItem {
+  id: number
+  index: number
+  customName: string
   url: string
   price: number | string
+}
+
+export interface IPrice {
+  itemId: number
+  url: string
+  oldPrice: number | string
+  newPrice: number | string
 
   name?: string
   preDiscount?: number | string
@@ -20,18 +30,47 @@ export interface IMapping {
 
 const spreadsheetId = process.env.SPREADSHEET_ID
 
-export const getItemUrls = async (
-  sheets: sheets_v4.Sheets
-): Promise<string[]> => {
+export const getItems = async (
+  sheets: sheets_v4.Sheets,
+  lastColumnName: string
+): Promise<IItem[]> => {
   const start = new Date()
 
   const {
-    data: { values }
-  } = await sheets.spreadsheets.values.get({ spreadsheetId, range: 'B2:B100' })
+    data: { valueRanges }
+  } = await sheets.spreadsheets.values.batchGet({
+    spreadsheetId,
+    ranges: ['A2:C100', `${lastColumnName}2:${lastColumnName}100`],
+    valueRenderOption: 'FORMULA'
+  })
 
-  await logAction('[2/7] Get item URLs', sheets, start)
+  const itemsData = valueRanges[0].values?.map((row, i) => ({
+    id: row[0],
+    index: i,
+    customName: row[1],
+    url: row[2]
+  }))
 
-  return (values as any).flat()
+  const priceData = valueRanges[1].values?.map((row, i) => ({
+    index: i,
+    price: row[0]
+  }))
+
+  const items = itemsData.map(
+    (item): IItem => {
+      const priceMatch = priceData?.find(
+        (price) => price.index === item.index
+      ) || {
+        price: null
+      }
+
+      return { ...item, ...priceMatch }
+    }
+  )
+
+  await logAction('[2/7] Get items data', sheets, start)
+
+  return items
 }
 
 export const writePrices = async (
@@ -49,7 +88,7 @@ export const writePrices = async (
     minute: 'numeric'
   })
 
-  const values = [[date], ...prices.map((item) => [item.price])]
+  const values = [[date], ...prices.map((item) => [item.newPrice])]
 
   await sheets.spreadsheets.values.update({
     spreadsheetId,

@@ -2,8 +2,10 @@ import { sheets_v4 } from 'googleapis'
 import { IPrice } from './sheetDataHandling'
 
 type ReportRow = [
+  number,
   string,
   string,
+  string | number,
   string | number,
   string | number,
   number,
@@ -60,7 +62,9 @@ export const logMultiple = async (
 
 export const generateReport = async (
   prices: IPrice[],
-  sheets: sheets_v4.Sheets
+  sheets: sheets_v4.Sheets,
+  silentCheck: boolean,
+  skipWrite: boolean
 ) => {
   const start = new Date()
   const parsedDate = formatDate(start)
@@ -68,17 +72,29 @@ export const generateReport = async (
   const priceReport: ReportRow[] = prices
     .filter((item) => item.url !== '-')
     .map((item) => [
+      item.itemId,
       item.name,
       item.url,
+      item.oldPrice,
       item.preDiscount,
-      item.price,
+      item.newPrice,
       item.time,
       parsedDate
     ])
 
+  const silentCheckNotice = `${
+    silentCheck
+      ? ` - silent check${
+          skipWrite ? ', no price changes' : ', price changes detected'
+        }`
+      : ''
+  }`
+
+  const header = `========== Detailed job report from ${parsedDate}${silentCheckNotice} ==========`
+
   const values = [
-    ['||', '||', '||', '||', '||', '||'],
-    [`========== Detailed job report from ${parsedDate} ==========`],
+    ['||', '||', '||', '||', '||', '||', '||', '||'],
+    [null, header],
     ...priceReport
   ]
 
