@@ -1,6 +1,6 @@
 import { sheets_v4 } from 'googleapis'
 
-import { logAction, logMultiple } from './logging'
+import { logAction } from './logging'
 
 export interface IItem {
   id: number
@@ -44,21 +44,21 @@ export const getItems = async (
     valueRenderOption: 'FORMULA'
   })
 
-  const itemsData = valueRanges[0].values.map((row, i) => ({
+  const itemsData = valueRanges[0].values?.map((row, i) => ({
     id: row[0],
     index: i,
     customName: row[1],
     url: row[2]
   }))
 
-  const priceData = valueRanges[1].values.map((row, i) => ({
+  const priceData = valueRanges[1].values?.map((row, i) => ({
     index: i,
     price: row[0]
   }))
 
   const items = itemsData.map(
     (item): IItem => {
-      const priceMatch = priceData.find(
+      const priceMatch = priceData?.find(
         (price) => price.index === item.index
       ) || {
         price: null

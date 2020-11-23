@@ -2,8 +2,8 @@ import got from 'got'
 import cheerio from 'cheerio'
 import { sheets_v4 } from 'googleapis'
 
-import { calculateTimeDiff, logAction, logMultiple } from './logging'
 import { getPageMapping, IItem, IPrice } from './sheetDataHandling'
+import { calculateTimeDiff, logAction, logMultiple } from './logging'
 
 export const checkPrices = async (items: IItem[], sheets: sheets_v4.Sheets) => {
   const start = new Date()
