@@ -3,6 +3,7 @@ import express from 'express'
 dotenv.config()
 
 import initialize from './src/initialize'
+import forceCheck from './src/forceCheck'
 import checkMapping from './src/checkMapping'
 
 const app = express()
@@ -22,6 +23,11 @@ app.get('/check-mapping', async (req, res) => {
 
   res.setHeader('Content-Type', 'application/json')
   res.send(JSON.stringify(results, null, 2))
+})
+
+app.get('/force-check', (req, res) => {
+  forceCheck()
+  res.send('Check job triggered.')
 })
 
 app.listen(port, () => {

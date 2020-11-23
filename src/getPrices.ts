@@ -33,7 +33,7 @@ const getPrices = async (sheets: sheets_v4.Sheets) => {
     prices.every((item) => item.oldPrice === item.newPrice) && silentCheck
 
   if (skipWrite) {
-    await logAction('No price changes detected - no new column added', sheets)
+    await logAction('No price changes detected - no data column added', sheets)
   } else {
     await addNewColumn(sheets)
     await writePrices(sheets, prices, newColumnName)

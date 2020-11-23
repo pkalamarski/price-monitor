@@ -14,8 +14,7 @@ const {
   CHECK_PRICE_INTERVAL,
   CHECK_HEALTH_INTERVAL,
   SERVER_URL,
-  ENV,
-  VERSION
+  ENV
 } = process.env
 
 const checkPriceIntervalHours = Number(CHECK_PRICE_INTERVAL) / 60 / 60 / 1000
@@ -30,11 +29,17 @@ const initialize = async () => {
   const { launchIn, launchDate } = calculateLaunchTimes()
 
   if (launchDate) {
-    await logAction(`Monitor will start at ${launchDate}`, sheets)
+    await logAction(
+      `Monitor will start in ${Math.floor(
+        launchIn / 1000 / 60
+      )} minutes, at ${launchDate}`,
+      sheets
+    )
   }
 
   setTimeout(
     async () => {
+      await logAction(`Continuous price monitor started`, sheets)
       await getPrices(sheets)
 
       setInterval(
@@ -49,15 +54,13 @@ const initialize = async () => {
 }
 
 const calculateLaunchTimes = (): ILaunchTime => {
-  const now = new Date()
-
-  const baseTime = now.setUTCMinutes(2, 0, 0)
+  const baseTime = new Date().setUTCMinutes(2, 0, 0)
 
   const nextHour = baseTime + 60 * 60 * 1000
 
-  const nearestDate = baseTime - now.getTime() > 0 ? baseTime : nextHour
+  const nearestDate = baseTime - new Date().getTime() > 0 ? baseTime : nextHour
 
-  const launchIn = nearestDate ? nearestDate - now.getTime() : 0
+  const launchIn = nearestDate ? nearestDate - new Date().getTime() : 0
   const launchDate = nearestDate && formatDate(new Date(nearestDate))
   return { launchIn, launchDate }
 }
@@ -66,7 +69,7 @@ const initMsg = async (sheets: sheets_v4.Sheets) =>
   await logMultiple(
     [
       null,
-      `============== price-monitor v${VERSION} ==============`,
+      `============== price-monitor v1.2.0 ==============`,
       `Price check interval: ${checkPriceIntervalHours} hour${
         checkPriceIntervalHours > 1 ? 's' : ''
       }`,
