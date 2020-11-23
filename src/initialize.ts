@@ -3,7 +3,7 @@ import { google, sheets_v4 } from 'googleapis'
 
 import initializeAuth from './authorize'
 import getPrices, { fullCheckHours } from './getPrices'
-import { logAction, logMultiple, formatDate } from './logging'
+import { logAction, logMultiple, formatDate } from './handlers/loggingHandler'
 
 interface ILaunchTime {
   launchIn: number

@@ -5,10 +5,10 @@ import {
   logMultiple,
   generateReport,
   calculateTimeDiff
-} from './logging'
-import { checkPrices } from './dataHandling'
-import { getItems, IPrice, writePrices } from './sheetDataHandling'
-import { addNewColumn, getColumnNames } from './sheetSchemaHandling'
+} from './handlers/loggingHandler'
+import { checkPrices } from './handlers/dataHandling'
+import { getItems, IPrice, writePrices } from './handlers/sheetDataHandling'
+import { addNewColumn, getColumnNames } from './handlers/sheetSchemaHandling'
 
 export const fullCheckHours = process.env.FULL_CHECK_HOURS.split(',').map(
   Number

@@ -1,6 +1,6 @@
 import { sheets_v4 } from 'googleapis'
 
-import { logAction } from './logging'
+import { logAction } from './loggingHandler'
 
 export interface IItem {
   id: number

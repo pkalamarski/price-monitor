@@ -1,7 +1,7 @@
 import { google } from 'googleapis'
 
 import getPrices from './getPrices'
-import { logAction } from './logging'
+import { logAction } from './handlers/loggingHandler'
 import initializeAuth from './authorize'
 
 const forceCheck = async () => {

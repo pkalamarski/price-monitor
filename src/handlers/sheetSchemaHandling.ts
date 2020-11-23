@@ -1,7 +1,7 @@
 import { sheets_v4 } from 'googleapis'
 import { intToExcelCol } from 'excel-column-name'
 
-import { logAction } from './logging'
+import { logAction } from './loggingHandler'
 
 interface IColumnNames {
   lastColumnName: string

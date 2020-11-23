@@ -3,9 +3,13 @@ import cheerio from 'cheerio'
 import { google } from 'googleapis'
 
 import initializeAuth from './authorize'
-import { parsePrice } from './dataHandling'
-import { calculateTimeDiff, logAction, logMultiple } from './logging'
-import { getPageMapping } from './sheetDataHandling'
+import { parsePrice } from './handlers/dataHandling'
+import {
+  calculateTimeDiff,
+  logAction,
+  logMultiple
+} from './handlers/loggingHandler'
+import { getPageMapping } from './handlers/sheetDataHandling'
 
 interface IPriceSet {
   htmlPrice: string
