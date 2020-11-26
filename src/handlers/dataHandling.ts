@@ -6,15 +6,12 @@ import { getPageMapping, IItem, IPrice } from './sheetDataHandling'
 import { calculateTimeDiff, logAction, logMultiple } from './loggingHandler'
 
 const requestHeaders = {
-  'Upgrade-Insecure-Requests': '1',
-  Dnt: '1',
   'Accept-Encoding': 'gzip, deflate, br',
   'Accept-Language': 'en-US,en;q=0.5',
   Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'User-Agent':
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
-  Connection: 'close',
-  'X-Forwarded-Proto': 'http'
+  'X-Forwarded-Proto': 'https'
 }
 
 export const checkPrices = async (items: IItem[], sheets: sheets_v4.Sheets) => {
