@@ -5,6 +5,18 @@ import { sheets_v4 } from 'googleapis'
 import { getPageMapping, IItem, IPrice } from './sheetDataHandling'
 import { calculateTimeDiff, logAction, logMultiple } from './logging'
 
+const requestHeaders = {
+  'Upgrade-Insecure-Requests': '1',
+  Dnt: '1',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'Accept-Language': 'en-US,en;q=0.5',
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
+  Connection: 'close',
+  'X-Forwarded-Proto': 'http'
+}
+
 export const checkPrices = async (items: IItem[], sheets: sheets_v4.Sheets) => {
   const start = new Date()
 
@@ -43,7 +55,7 @@ export const checkPrices = async (items: IItem[], sheets: sheets_v4.Sheets) => {
     const itemStart = new Date()
 
     try {
-      const page = await got(url)
+      const page = await got(url, { headers: requestHeaders })
       const $ = cheerio.load(page.body)
 
       const { host } = new URL(url)
