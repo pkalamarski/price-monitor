@@ -1,15 +1,16 @@
 import dotenv from 'dotenv'
 import express from 'express'
+import path from 'path'
 dotenv.config()
 
-import initialize from './src/initialize'
-import forceCheck from './src/forceCheck'
-import checkMapping from './src/checkMapping'
+import initialize from './app/initialize'
+import checkMapping from './app/checkMapping'
+import JobService from './services/JobService'
 
 const app = express()
 const port = 8080
 
-app.get('/', (req, res) => {
+app.get('/health', async (req, res) => {
   res.send('OK')
 })
 
@@ -26,11 +27,18 @@ app.get('/check-mapping', async (req, res) => {
 })
 
 app.get('/force-check', (req, res) => {
-  forceCheck()
+  // forceCheck()
   res.send('Check job triggered.')
 })
 
+app.use('/static', express.static('dist_web'))
+app.use('/', express.static('dist_web'))
+
+app.get('*', (req, res) =>
+  res.sendFile(path.join(process.cwd(), 'dist_web/index.html'))
+)
+
 app.listen(port, () => {
-  initialize()
-  console.log('Ready to serve requests')
+  JobService.priceCheck()
+  console.log('🚀 Ready to serve requests')
 })
