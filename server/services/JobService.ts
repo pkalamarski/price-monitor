@@ -44,3 +44,10 @@ class JobService {
 const instance = new JobService()
 
 export default instance
+
+// const monitorHealth = (sheets: sheets_v4.Sheets) =>
+//   setInterval(async () => {
+//     const start = new Date()
+//     const { data } = await Axios.get(SERVER_URL)
+//     await logAction(`Health check - ${data}`, sheets, start)
+//   }, Number(CHECK_HEALTH_INTERVAL))
