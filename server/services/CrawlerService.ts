@@ -1,12 +1,12 @@
 import got from 'got'
 import cheerio from 'cheerio'
+import { Inject, Injectable } from '@decorators/di'
 
+import Products from '../models/Products'
 import PriceData, { IPriceData } from '../models/PriceData'
+import SiteMapping, { ISiteMapping } from '../models/SiteMapping'
 
 import PriceDataService from './PriceDataService'
-import SiteMapping, { ISiteMapping } from '../models/SiteMapping'
-import Products from '../models/Products'
-import { Inject, Injectable } from '@decorators/di'
 
 const requestHeaders = {
   'Accept-Encoding': 'gzip, deflate, br',
@@ -24,7 +24,7 @@ class CrawlerService {
   ) {}
 
   async fetchPrices() {
-    console.log('starting')
+    console.log('Starting price check job')
 
     const products = await Products.getAll()
 

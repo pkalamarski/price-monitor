@@ -1,10 +1,12 @@
-import dotenv from 'dotenv'
-dotenv.config()
-import express from 'express'
 import path from 'path'
+import Axios from 'axios'
+import dotenv from 'dotenv'
+import express from 'express'
+dotenv.config()
+
 import router from './routes'
 
-import JobService from './services/JobService'
+const { SERVER_URL, API_KEY } = process.env
 
 const app = express()
 const port = 8080
@@ -23,5 +25,6 @@ app.get('*', (req, res) =>
 )
 
 app.listen(port, () => {
+  Axios.get(SERVER_URL + '/api/trigger-monitor', { params: { key: API_KEY } })
   console.log('🚀 Ready to serve requests')
 })

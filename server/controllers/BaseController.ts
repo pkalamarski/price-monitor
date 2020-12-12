@@ -1,15 +1,15 @@
 import { Inject } from '@decorators/di'
-import { Controller, Get } from '@decorators/express'
 import { Request, Response } from 'express'
+import { Controller, Get } from '@decorators/express'
 
 import Products from '../models/Products'
 import PriceData, { IPriceData } from '../models/PriceData'
 
-import ProductService from '../services/ProductService'
+import JobService from '../services/JobService'
 
 @Controller('/api')
 class BaseController {
-  constructor(@Inject(ProductService) private productService: ProductService) {}
+  constructor(@Inject(JobService) private jobService: JobService) {}
 
   @Get('/products')
   async products(req: Request, res: Response) {
@@ -27,6 +27,14 @@ class BaseController {
     const priceData = await PriceData.getByProductId(productId)
 
     res.json(priceData)
+  }
+
+  @Get('/trigger-monitor')
+  async triggerJob(req: Request, res: Response) {
+    if (req.query.key !== process.env.API_KEY)
+      return console.warn('Invalid key')
+
+    await this.jobService.startPriceMonitor()
   }
 }
 
