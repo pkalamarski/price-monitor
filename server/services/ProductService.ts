@@ -1,7 +1,7 @@
+import { Injectable } from '@decorators/di'
 import Products from '../models/Products'
 
+@Injectable()
 class ProductService {}
 
-const instance = new ProductService()
-
-export default instance
+export default ProductService

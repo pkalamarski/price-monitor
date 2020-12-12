@@ -1,9 +1,9 @@
+import { Injectable } from '@decorators/di'
 import SiteMapping from '../models/SiteMapping'
 
+@Injectable()
 class MappingService {
   constructor() {}
 }
 
-const instance = new MappingService()
-
-export default instance
+export default MappingService

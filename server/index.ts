@@ -1,10 +1,9 @@
 import dotenv from 'dotenv'
+dotenv.config()
 import express from 'express'
 import path from 'path'
-dotenv.config()
+import router from './routes'
 
-import initialize from './app/initialize'
-import checkMapping from './app/checkMapping'
 import JobService from './services/JobService'
 
 const app = express()
@@ -14,22 +13,7 @@ app.get('/health', async (req, res) => {
   res.send('OK')
 })
 
-app.get('/check-mapping', async (req, res) => {
-  if (!req.query.url) {
-    res.send('No URL provided')
-    return
-  }
-
-  const results = await checkMapping(req.query.url as string)
-
-  res.setHeader('Content-Type', 'application/json')
-  res.send(JSON.stringify(results, null, 2))
-})
-
-app.get('/force-check', (req, res) => {
-  // forceCheck()
-  res.send('Check job triggered.')
-})
+app.use('/', router)
 
 app.use('/static', express.static('dist_web'))
 app.use('/', express.static('dist_web'))
@@ -39,6 +23,5 @@ app.get('*', (req, res) =>
 )
 
 app.listen(port, () => {
-  JobService.priceCheck()
   console.log('🚀 Ready to serve requests')
 })

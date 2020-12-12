@@ -1,5 +1,7 @@
+import { Injectable } from '@decorators/di'
 import PriceData, { IPrice, IPriceData } from '../models/PriceData'
 
+@Injectable()
 class PriceDataService {
   getNewestPrice(prices: IPrice[]): IPrice {
     if (!prices?.length) return
@@ -49,6 +51,4 @@ class PriceDataService {
   }
 }
 
-const instance = new PriceDataService()
-
-export default instance
+export default PriceDataService
