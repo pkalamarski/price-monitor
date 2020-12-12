@@ -33,6 +33,14 @@ const PricePanel = ({ product }: IProps) => {
             )
             .map((price, i) => (
               <span style={{ flexFlow: 'column', marginRight: 15 }} key={i}>
+                {price.preDiscount ? (
+                  <p>
+                    Pre-discount price:{' '}
+                    <span style={{ textDecoration: 'line-through' }}>
+                      {price.preDiscount} {priceData.currency}
+                    </span>
+                  </p>
+                ) : null}
                 <p>
                   Price: {price.main} {priceData.currency}
                 </p>
