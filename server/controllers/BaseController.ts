@@ -1,7 +1,9 @@
 import { Inject } from '@decorators/di'
 import { Controller, Get } from '@decorators/express'
 import { Request, Response } from 'express'
+
 import Products from '../models/Products'
+import PriceData, { IPriceData } from '../models/PriceData'
 
 import ProductService from '../services/ProductService'
 
@@ -14,6 +16,17 @@ class BaseController {
     const products = await Products.getAll()
 
     res.json(products)
+  }
+
+  @Get('/productPrices')
+  async productPrices(req: Request, res: Response): Promise<IPriceData> {
+    const productId = req.query.productId as string
+
+    if (!productId) return // TODO: throw error
+
+    const priceData = await PriceData.getByProductId(productId)
+
+    res.json(priceData)
   }
 }
 
