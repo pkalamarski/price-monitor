@@ -6,6 +6,7 @@ import PriceData, { IPriceData } from '../models/PriceData'
 import PriceDataService from './PriceDataService'
 import SiteMapping, { ISiteMapping } from '../models/SiteMapping'
 import Products from '../models/Products'
+import { Inject, Injectable } from '@decorators/di'
 
 const requestHeaders = {
   'Accept-Encoding': 'gzip, deflate, br',
@@ -16,7 +17,12 @@ const requestHeaders = {
   'X-Forwarded-Proto': 'https'
 }
 
+@Injectable()
 class CrawlerService {
+  constructor(
+    @Inject(PriceDataService) private priceDataService: PriceDataService
+  ) {}
+
   async fetchPrices() {
     console.log('starting')
 
@@ -68,7 +74,7 @@ class CrawlerService {
       const formattedPreDiscount =
         rawNewPrice && rawPreDiscountPrice ? parsePrice(rawPreDiscountPrice) : 0
 
-      await PriceDataService.saveProductPrice(productPriceData, {
+      await this.priceDataService.saveProductPrice(productPriceData, {
         formattedPrice,
         formattedPreDiscount
       })
@@ -89,6 +95,4 @@ export const parsePrice = (price: string): number => {
   return price === '-' ? 0 : Number(strippedPrice) || 0
 }
 
-const instance = new CrawlerService()
-
-export default instance
+export default CrawlerService

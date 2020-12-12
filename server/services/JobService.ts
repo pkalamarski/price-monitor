@@ -1,5 +1,6 @@
 import CrawlerService from './CrawlerService'
 import { CronJob } from 'cron'
+import { Injectable } from '@decorators/di'
 interface ILaunchTime {
   launchIn: number
   launchDate: string
@@ -14,6 +15,7 @@ const {
 
 const checkPriceIntervalHours = Number(CHECK_PRICE_INTERVAL) / 60 / 60 / 1000
 
+@Injectable()
 class JobService {
   async priceCheck() {
     // await initMsg(sheets)
@@ -41,9 +43,7 @@ class JobService {
   }
 }
 
-const instance = new JobService()
-
-export default instance
+export default JobService
 
 // const monitorHealth = (sheets: sheets_v4.Sheets) =>
 //   setInterval(async () => {
