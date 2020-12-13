@@ -6,22 +6,23 @@ import { logVerbose } from '../logger'
 import getNewestPrice from '../utility/getNewestPrice'
 
 interface IFetchedData {
-  formattedPrice: number
-  formattedPreDiscount: number
+  mainPrice: number
+  preDiscountPrice: number
 }
 
 @Injectable()
 class PriceDataService {
   async saveProductPrice(
+    productId: string,
     productPriceData: IPriceData,
     fetchedData: IFetchedData
   ): Promise<void> {
-    const { formattedPrice } = fetchedData
+    const { mainPrice: formattedPrice } = fetchedData
 
     const newestPrice = getNewestPrice(productPriceData?.prices)
 
     if (!productPriceData) {
-      this.addNewDocument(productPriceData, fetchedData)
+      this.addNewDocument(productId, fetchedData)
     } else if (newestPrice?.main === formattedPrice) {
       this.updatePriceDocument(productPriceData)
     } else {
@@ -30,18 +31,18 @@ class PriceDataService {
   }
 
   private async addNewDocument(
-    productPriceData: IPriceData,
-    { formattedPrice, formattedPreDiscount }: IFetchedData
+    productId: string,
+    { mainPrice: mainPrice, preDiscountPrice: preDiscountPrice }: IFetchedData
   ): Promise<void> {
     logVerbose('Adding new PriceData object')
 
     await PriceData.create({
       currency: 'PLN',
-      productId: productPriceData.productId,
+      productId: productId,
       prices: [
         {
-          main: formattedPrice,
-          preDiscount: formattedPreDiscount,
+          main: mainPrice,
+          preDiscount: preDiscountPrice,
           date: new Date()
         }
       ],
@@ -60,7 +61,10 @@ class PriceDataService {
 
   private async insertNewPrice(
     productPriceData: IPriceData,
-    { formattedPrice, formattedPreDiscount }: IFetchedData
+    {
+      mainPrice: formattedPrice,
+      preDiscountPrice: formattedPreDiscount
+    }: IFetchedData
   ): Promise<void> {
     logVerbose('Inserting new price')
 

@@ -1,5 +1,6 @@
 import got from 'got'
 import cheerio from 'cheerio'
+import puppeteer from 'puppeteer'
 import { Inject, Injectable } from '@decorators/di'
 
 import Products, { IProduct } from '../models/Products'
@@ -9,19 +10,15 @@ import SiteMapping, { ISiteMapping } from '../models/SiteMapping'
 import PriceDataService from './PriceDataService'
 import { logError, logInfo, logVerbose } from '../logger'
 
-const requestHeaders = {
-  'Accept-Encoding': 'gzip, deflate, br',
-  'Accept-Language': 'en-US,en;q=0.5',
-  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-  'User-Agent':
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
-  'X-Forwarded-Proto': 'https'
-}
-
-interface IFetchRequiredData {
+interface IFetchSetup {
   productPriceData: IPriceData
   siteMapping: ISiteMapping
   strippedHost: string
+}
+
+interface IFetchedPrices {
+  mainPrice: number
+  preDiscountPrice: number
 }
 
 @Injectable()
@@ -44,15 +41,17 @@ class CrawlerService {
       Math.floor(p * products.length)
     )
 
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+
     for (const product of products) {
-      const { url } = product
       const index = products.indexOf(product)
 
-      const {
-        productPriceData,
-        strippedHost,
-        siteMapping
-      } = this.getFetchRequiredData(product, priceData, mapping)
+      const { productPriceData, strippedHost, siteMapping } = this.getSetupData(
+        product,
+        priceData,
+        mapping
+      )
 
       if (checkpoints.includes(index + 1)) {
         logInfo(`Checkpoint: ${index + 1} of ${products.length} prices checked`)
@@ -63,8 +62,10 @@ class CrawlerService {
         continue
       }
 
-      await this.fetchProductData(url, siteMapping, productPriceData)
+      await this.fetchProductData(page, product, siteMapping, productPriceData)
     }
+
+    await browser.close()
 
     const elapsedSeconds = (new Date().getTime() - startTime.getTime()) / 1000
 
@@ -76,41 +77,96 @@ class CrawlerService {
   }
 
   async fetchProductData(
-    url: string,
+    page: puppeteer.Page,
+    product: IProduct,
     siteMapping: ISiteMapping,
     productPriceData: IPriceData
   ): Promise<void> {
-    logVerbose(`Fetching prices for productId: ${productPriceData.productId}`)
+    const { id: productId, url } = product
+    logVerbose(`Fetching prices for productId: ${productId}`)
 
     try {
-      const page = await got(url, { headers: requestHeaders })
-      const $ = cheerio.load(page.body)
+      let fetchedPrices: IFetchedPrices
 
-      const { preDiscountSelector, priceSelector } = siteMapping
+      if (siteMapping.usePuppeteer) {
+        fetchedPrices = await this.fetchWithPupeteer(page, url, siteMapping)
+      } else {
+        fetchedPrices = await this.fetchWithCheerio(url, siteMapping)
+      }
 
-      const rawPreDiscountPrice = $(preDiscountSelector).text()
-      const rawNewPrice = $(priceSelector).text()
-
-      const formattedPrice = rawNewPrice ? this.parsePrice(rawNewPrice) : 0
-      const formattedPreDiscount =
-        rawNewPrice && rawPreDiscountPrice
-          ? this.parsePrice(rawPreDiscountPrice)
-          : 0
-
-      await this.priceDataService.saveProductPrice(productPriceData, {
-        formattedPrice,
-        formattedPreDiscount
-      })
+      await this.priceDataService.saveProductPrice(
+        productId,
+        productPriceData,
+        fetchedPrices
+      )
     } catch (e) {
+      logError(`URL: ${url}`)
       logError(e)
     }
   }
 
-  private getFetchRequiredData(
+  private async fetchWithPupeteer(
+    page: puppeteer.Page,
+    url: string,
+    siteMapping: ISiteMapping
+  ): Promise<IFetchedPrices> {
+    logVerbose('Fetching with Puppeteer')
+
+    const { preDiscountSelector, priceSelector } = siteMapping
+
+    await page.goto(url, { waitUntil: 'networkidle0' })
+
+    const tagsContent = await page.evaluate(
+      (priceSelector, preDiscountSelector) => ({
+        mainPrice: document.querySelector(priceSelector)?.innerText,
+        preDiscountPrice: document.querySelector(preDiscountSelector)?.innerText
+      }),
+      [priceSelector, preDiscountSelector]
+    )
+
+    return {
+      mainPrice: this.parsePrice(tagsContent?.mainPrice),
+      preDiscountPrice: this.parsePrice(tagsContent?.preDiscountPrice)
+    }
+  }
+
+  private async fetchWithCheerio(
+    url: string,
+    siteMapping: ISiteMapping
+  ): Promise<IFetchedPrices> {
+    logVerbose('Fetching with Cheerio')
+
+    const requestHeaders = {
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Accept-Language': 'en-US,en;q=0.5',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0',
+      'X-Forwarded-Proto': 'https'
+    }
+
+    const { preDiscountSelector, priceSelector } = siteMapping
+
+    const page = await got(url, { headers: requestHeaders })
+    const $ = cheerio.load(page.body)
+
+    const rawPreDiscountPrice = $(preDiscountSelector).text()
+    const rawNewPrice = $(priceSelector).text()
+
+    const mainPrice = rawNewPrice ? this.parsePrice(rawNewPrice) : 0
+    const preDiscountPrice =
+      rawNewPrice && rawPreDiscountPrice
+        ? this.parsePrice(rawPreDiscountPrice)
+        : 0
+
+    return { mainPrice, preDiscountPrice }
+  }
+
+  private getSetupData(
     product: IProduct,
     priceData: IPriceData[],
     mapping: ISiteMapping[]
-  ): IFetchRequiredData {
+  ): IFetchSetup {
     const { id, url } = product
 
     const productPriceData = priceData.find((price) => price.productId === id)
