@@ -1,53 +1,76 @@
 import { Injectable } from '@decorators/di'
-import PriceData, { IPrice, IPriceData } from '../models/PriceData'
+
+import PriceData, { IPriceData } from '../models/PriceData'
+
+import { logVerbose } from '../logger'
+import getNewestPrice from '../utility/getNewestPrice'
+
+interface IFetchedData {
+  formattedPrice: number
+  formattedPreDiscount: number
+}
 
 @Injectable()
 class PriceDataService {
-  getNewestPrice(prices: IPrice[]): IPrice {
-    if (!prices?.length) return
-
-    const sortedPrices = prices.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    )
-
-    return sortedPrices[0]
-  }
-
   async saveProductPrice(
     productPriceData: IPriceData,
-    fetchedData: { formattedPrice: number; formattedPreDiscount: number }
-  ) {
-    const { formattedPrice, formattedPreDiscount } = fetchedData
+    fetchedData: IFetchedData
+  ): Promise<void> {
+    const { formattedPrice } = fetchedData
 
-    const newestPrice = this.getNewestPrice(productPriceData?.prices)
+    const newestPrice = getNewestPrice(productPriceData?.prices)
 
     if (!productPriceData) {
-      await PriceData.create({
-        currency: 'PLN',
-        productId: productPriceData.productId,
-        prices: [
-          {
-            main: formattedPrice,
-            preDiscount: formattedPreDiscount,
-            date: new Date()
-          }
-        ],
-        createdDate: new Date(),
-        updatedDate: new Date()
-      })
+      this.addNewDocument(productPriceData, fetchedData)
     } else if (newestPrice?.main === formattedPrice) {
-      console.log(`${newestPrice?.main} === ${formattedPrice}`)
-      await PriceData.insertPrices(productPriceData)
+      this.updatePriceDocument(productPriceData)
     } else {
-      console.log('Inserting new price')
-      await PriceData.insertPrices(productPriceData, [
+      this.insertNewPrice(productPriceData, fetchedData)
+    }
+  }
+
+  private async addNewDocument(
+    productPriceData: IPriceData,
+    { formattedPrice, formattedPreDiscount }: IFetchedData
+  ): Promise<void> {
+    logVerbose('Adding new PriceData object')
+
+    await PriceData.create({
+      currency: 'PLN',
+      productId: productPriceData.productId,
+      prices: [
         {
           main: formattedPrice,
           preDiscount: formattedPreDiscount,
           date: new Date()
         }
-      ])
-    }
+      ],
+      createdDate: new Date(),
+      updatedDate: new Date()
+    })
+  }
+
+  private async updatePriceDocument(
+    productPriceData: IPriceData
+  ): Promise<void> {
+    logVerbose('Price is the same - skipping save')
+
+    await PriceData.insertPrices(productPriceData)
+  }
+
+  private async insertNewPrice(
+    productPriceData: IPriceData,
+    { formattedPrice, formattedPreDiscount }: IFetchedData
+  ): Promise<void> {
+    logVerbose('Inserting new price')
+
+    await PriceData.insertPrices(productPriceData, [
+      {
+        main: formattedPrice,
+        preDiscount: formattedPreDiscount,
+        date: new Date()
+      }
+    ])
   }
 }
 
