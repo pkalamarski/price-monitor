@@ -5,7 +5,7 @@ import PricePanel from '../components/PricePanel'
 
 import { IProduct } from '../../server/models/Products'
 
-const Index = () => {
+const Index = (): JSX.Element => {
   const [{ data: products, loading }] = useAxios<IProduct[]>('/api/products')
 
   if (loading || !products) return <div>Loading</div>

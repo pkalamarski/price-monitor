@@ -8,8 +8,8 @@ interface IProps {
   product: IProduct
 }
 
-const PricePanel = ({ product }: IProps) => {
-  const [{ data: priceData, loading }] = useAxios<IPriceData>({
+const PricePanel = ({ product }: IProps): JSX.Element => {
+  const [{ data: priceData }] = useAxios<IPriceData>({
     url: '/api/productPrices',
     params: { productId: product.id }
   })
