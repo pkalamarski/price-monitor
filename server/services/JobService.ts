@@ -18,7 +18,7 @@ class JobService {
   constructor(@Inject(CrawlerService) private crawlerService: CrawlerService) {}
 
   async startPriceMonitor(): Promise<void> {
-    logInfo(`Starting price monitor in ${ENV} mode`)
+    logInfo(`🔎 Starting price monitor in ${ENV} mode`)
 
     if (ENV === 'dev') {
       await this.crawlerService.fetchPrices()
@@ -36,6 +36,8 @@ class JobService {
   }
 
   private monitorHealth() {
+    logInfo('💗 Starting health monitor')
+
     new CronJob(HEALTH_JOB_CRON_TIME, async () => {
       const { data } = await Axios.get(`${SERVER_URL}/health`)
       logInfo(`Health check: ${data}`)

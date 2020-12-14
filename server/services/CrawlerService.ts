@@ -125,7 +125,7 @@ class CrawlerService {
 
     const { preDiscountSelector, priceSelector } = siteMapping
 
-    await page.goto(url, { waitUntil: 'networkidle0' })
+    await page.goto(url, { waitUntil: 'networkidle0', timeout: 120000 })
 
     const tagsContent = await page.evaluate(
       (priceSelector, preDiscountSelector) => ({
