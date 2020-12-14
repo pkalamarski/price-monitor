@@ -4,13 +4,16 @@
   "description": "",
   "main": "server/index.ts",
   "scripts": {
+    "start": "node dist_node/index.js",
     "build-client": "parcel build client/index.html --out-dir dist_web",
     "build-server": "parcel build server/index.ts --target node --out-dir dist_node",
     "build": "npm run build-client && npm run build-server",
     "client": "parcel watch client/index.html --out-dir dist_web",
     "server": "nodemon",
     "serve": "concurrently --kill-others -c \"blue.bold,magenta.bold\" \"npm:client\" \"npm:server\"",
-    "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore ./"
+    "lint": "eslint --ext .ts,.tsx --ignore-path .gitignore ./",
+    "docker-build": "docker build --tag price-monitor .",
+    "docker-run": "docker run --rm --publish 8080:8080 price-monitor"
   },
   "author": "",
   "license": "ISC",
