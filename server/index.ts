@@ -1,4 +1,5 @@
 import path from 'path'
+import cors from 'cors'
 import Axios from 'axios'
 import dotenv from 'dotenv'
 import express from 'express'
@@ -8,8 +9,18 @@ import router from './routes'
 
 const { SERVER_URL, API_KEY } = process.env
 
+const triggerMonitor = () => {
+  Axios.get(SERVER_URL + '/api/trigger-monitor', {
+    params: { key: API_KEY }
+  }).then(({ data }) =>
+    console.log(`🔎 Price monitor trigger response: ${data}`)
+  )
+}
+
 const app = express()
 const port = 8080
+
+app.use(cors())
 
 app.get('/health', async (req, res) => {
   res.send('OK')
@@ -25,6 +36,6 @@ app.get('*', (req, res) =>
 )
 
 app.listen(port, () => {
-  Axios.get(SERVER_URL + '/api/trigger-monitor', { params: { key: API_KEY } })
+  triggerMonitor()
   console.log(`🚀 Server listening on port ${port}`)
 })

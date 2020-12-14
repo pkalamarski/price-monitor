@@ -35,13 +35,14 @@ class BaseController {
   }
 
   @Get('/trigger-monitor')
-  async triggerJob(req: Request, res: Response): Promise<void> {
+  triggerJob(req: Request, res: Response): void {
     if (req.query.key !== process.env.API_KEY) {
       logError('Invalid key')
-      return
+      res.status(403).send('Invalid key')
     }
 
-    await this.jobService.startPriceMonitor()
+    this.jobService.startPriceMonitor()
+    res.status(200).send('OK')
   }
 }
 
