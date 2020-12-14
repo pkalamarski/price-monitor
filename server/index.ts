@@ -6,15 +6,19 @@ import express from 'express'
 dotenv.config()
 
 import router from './routes'
+import { logError, logInfo } from './logger'
 
 const { SERVER_URL, API_KEY } = process.env
 
 const triggerMonitor = () => {
-  Axios.get(SERVER_URL + '/api/trigger-monitor', {
-    params: { key: API_KEY }
-  }).then(({ data }) =>
-    console.log(`🔎 Price monitor trigger response: ${data}`)
-  )
+  try {
+    Axios.get(`${SERVER_URL}/api/trigger-monitor`, {
+      params: { key: API_KEY }
+    })
+  } catch (e) {
+    logError('Price monitor not able to start')
+    logError(e)
+  }
 }
 
 const app = express()
@@ -36,6 +40,6 @@ app.get('*', (req, res) =>
 )
 
 app.listen(port, () => {
+  logInfo(`🚀 Server listening on port ${port}`)
   triggerMonitor()
-  console.log(`🚀 Server listening on port ${port}`)
 })
