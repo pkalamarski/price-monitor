@@ -32,7 +32,7 @@ class PriceDataService {
 
   private async addNewDocument(
     productId: string,
-    { mainPrice: mainPrice, preDiscountPrice: preDiscountPrice }: IFetchedData
+    { mainPrice, preDiscountPrice }: IFetchedData
   ): Promise<void> {
     logVerbose('Adding new PriceData object')
 
@@ -45,9 +45,7 @@ class PriceDataService {
           preDiscount: preDiscountPrice,
           date: new Date()
         }
-      ],
-      createdDate: new Date(),
-      updatedDate: new Date()
+      ]
     })
   }
 
@@ -61,17 +59,14 @@ class PriceDataService {
 
   private async insertNewPrice(
     productPriceData: IPriceData,
-    {
-      mainPrice: formattedPrice,
-      preDiscountPrice: formattedPreDiscount
-    }: IFetchedData
+    { mainPrice, preDiscountPrice }: IFetchedData
   ): Promise<void> {
     logVerbose('Inserting new price')
 
     await PriceData.insertPrices(productPriceData, [
       {
-        main: formattedPrice,
-        preDiscount: formattedPreDiscount,
+        main: mainPrice,
+        preDiscount: preDiscountPrice,
         date: new Date()
       }
     ])
