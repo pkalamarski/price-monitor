@@ -41,7 +41,7 @@ class CrawlerService {
       Math.floor(p * products.length)
     )
 
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
     const page = await browser.newPage()
 
     let itemTimes: number[] = []
