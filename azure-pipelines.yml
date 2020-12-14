@@ -27,7 +27,7 @@ steps:
   # DEPLOYMENT STEPS
   - task: Docker@2
     displayName: 'Docker build and push'
-    condition: "eq(variables['Build.SourceBranch'], 'refs/heads/master')"
+    # condition: "eq(variables['Build.SourceBranch'], 'refs/heads/master')"
     inputs:
       containerRegistry: 'docker'
       repository: 'pkalamarski/price-monitor'
