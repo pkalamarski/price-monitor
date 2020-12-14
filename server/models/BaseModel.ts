@@ -40,13 +40,13 @@ export default class BaseContainer<T extends IDocument> {
   }
 
   async getOne(whereOptions: Partial<T>): Promise<T> {
-    const items = await this.get(whereOptions, true)
+    const items = await this.queryBuilder(whereOptions, true)
 
     return items[0]
   }
 
   async getMany(whereOptions: Partial<T>): Promise<T[]> {
-    const items = await this.get(whereOptions)
+    const items = await this.queryBuilder(whereOptions)
 
     return items
   }
@@ -83,7 +83,7 @@ export default class BaseContainer<T extends IDocument> {
     return response
   }
 
-  private async get(whereOptions: Partial<T>, getOne?: boolean) {
+  private async queryBuilder(whereOptions: Partial<T>, getOne?: boolean) {
     const query = Object.keys(whereOptions).reduce(
       (query, key, i) => (query += `${i ? 'AND ' : ' '}c.${key} = @${key}`),
       `SELECT * FROM ${this.containerId} c WHERE `

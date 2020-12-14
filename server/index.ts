@@ -26,5 +26,5 @@ app.get('*', (req, res) =>
 
 app.listen(port, () => {
   Axios.get(SERVER_URL + '/api/trigger-monitor', { params: { key: API_KEY } })
-  console.log('🚀 Ready to serve requests')
+  console.log(`🚀 Server listening on port ${port}`)
 })

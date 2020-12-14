@@ -4,7 +4,9 @@
   "description": "",
   "main": "server/index.ts",
   "scripts": {
-    "build-client": "parcel build app.ts --target node --out-dir dist_web",
+    "build-client": "parcel build client/index.html --out-dir dist_web",
+    "build-server": "parcel build server/index.ts --target node --out-dir dist_node",
+    "build": "npm run build-client && npm run build-server",
     "client": "parcel watch client/index.html --out-dir dist_web",
     "server": "nodemon",
     "serve": "concurrently --kill-others -c \"blue.bold,magenta.bold\" \"npm:client\" \"npm:server\"",

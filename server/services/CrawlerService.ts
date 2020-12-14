@@ -44,7 +44,11 @@ class CrawlerService {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
 
+    let itemTimes: number[] = []
+
     for (const product of products) {
+      const itemStart = new Date()
+
       const index = products.indexOf(product)
 
       const { productPriceData, strippedHost, siteMapping } = this.getSetupData(
@@ -63,17 +67,24 @@ class CrawlerService {
       }
 
       await this.fetchProductData(page, product, siteMapping, productPriceData)
+
+      itemTimes = [...itemTimes, new Date().getTime() - itemStart.getTime()]
     }
 
     await browser.close()
 
     const elapsedSeconds = (new Date().getTime() - startTime.getTime()) / 1000
+    const { avg, high, low } = this.calculateAverageTime(itemTimes)
 
     logInfo(
       `SUCCESS: ${products.length} prices checked in ${elapsedSeconds.toFixed(
         1
       )} seconds`
     )
+
+    logVerbose(`Fastest fetch time: ${low}ms`)
+    logVerbose(`Average fetch time: ${avg}ms`)
+    logVerbose(`Slowest fetch time: ${high}ms`)
   }
 
   async fetchProductData(
@@ -187,6 +198,14 @@ class CrawlerService {
       .replace('.-', '')
 
     return price === '-' ? 0 : Number(strippedPrice) || 0
+  }
+
+  private calculateAverageTime(times: number[]) {
+    const high = times.sort((a, b) => b - a)[0]
+    const avg = times.reduce((sum, t) => sum + t) / times.length
+    const low = times.sort((a, b) => a - b)[0]
+
+    return { high, avg, low }
   }
 }
 
