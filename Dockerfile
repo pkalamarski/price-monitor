@@ -9,11 +9,9 @@ RUN apk add --no-cache chromium
 
 COPY . ./
 
-RUN npm set unsafe-perm true
-
-RUN npm ci
-
-RUN npm run build
+RUN npm set unsafe-perm true && \
+    npm ci && \
+    npm run build
 
 EXPOSE 8080
 CMD ["npm", "start"]

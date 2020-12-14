@@ -23,3 +23,13 @@ steps:
 
   - script: npm run build
     displayName: Build package
+
+  # DEPLOYMENT STEPS
+  - task: Docker@2
+    displayName: Docker build and push
+    condition: "eq(variables['Build.SourceBranch'], 'refs/heads/master')"
+    inputs:
+      containerRegistry: 'docker'
+      repository: 'pkalamarski/price-monitor'
+      command: 'buildAndPush'
+      Dockerfile: '**/Dockerfile'
