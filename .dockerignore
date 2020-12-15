@@ -23,7 +23,6 @@ dist/
 dist_web/
 dist_node/
 
-
 # Dependency directories
 node_modules/
 

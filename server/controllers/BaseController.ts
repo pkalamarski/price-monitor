@@ -5,12 +5,12 @@ import { Controller, Get } from '@decorators/express'
 import Products from '../models/Products'
 import PriceData from '../models/PriceData'
 
-import JobService from '../services/JobService'
+import MonitorService from '../services/MonitorService'
 import { logError } from '../logger'
 
 @Controller('/api')
 class BaseController {
-  constructor(@Inject(JobService) private jobService: JobService) {}
+  constructor(@Inject(MonitorService) private monitorService: MonitorService) {}
 
   @Get('/products')
   async products(req: Request, res: Response): Promise<void> {
@@ -34,14 +34,14 @@ class BaseController {
     res.json(priceData)
   }
 
-  @Get('/trigger-monitor')
+  @Get('/trigger-check')
   triggerJob(req: Request, res: Response): void {
     if (req.query.key !== process.env.API_KEY) {
       logError('Invalid key')
       res.status(403).send('Invalid key')
     }
 
-    this.jobService.startPriceMonitor()
+    this.monitorService.manualPriceCheck()
     res.status(200).send('OK')
   }
 }
