@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@decorators/di'
 
 import { logError, logInfo } from '../logger'
 import CrawlerService from './CrawlerService'
-import formatDate from '../utility/formatDate'
+import { toLocaleString } from '../utility/formatDate'
 
 const {
   ENV,
@@ -24,7 +24,6 @@ class MonitorService {
 
     if (ENV !== 'dev') {
       this.startPriceMonitor()
-      this.startHealthMonitor()
     }
   }
 
@@ -38,6 +37,7 @@ class MonitorService {
     logInfo(`💰 Starting price monitor`)
 
     this.priceMonitorJob.start()
+    this.startHealthMonitor()
 
     logInfo(this.parseNextJobMessage(this.priceMonitorJob.nextDate().toDate()))
   }
@@ -65,7 +65,13 @@ class MonitorService {
     const healthMonitorJob = new CronJob(HEALTH_JOB_CRON_TIME, async () => {
       try {
         const { data } = await Axios.get(`${SERVER_URL}/health`)
-        logInfo(`Health check: ${data}`)
+
+        if (this.priceMonitorJob.running) {
+          logInfo(`Health check ${data}: monitor is up`)
+        } else {
+          logError('Monitor is down, attempting restart...')
+          this.priceMonitorJob.start()
+        }
       } catch (e) {
         logError('Health check failed')
         logError(e)
@@ -79,7 +85,7 @@ class MonitorService {
     const minutesTillJob =
       (nextStart.getTime() - new Date().getTime()) / 1000 / 60
 
-    return `⏭  Next job will start in ${minutesTillJob.toFixed()} minutes at ${formatDate(
+    return `⏭  Next job will start in ${minutesTillJob.toFixed()} minutes at ${toLocaleString(
       nextStart
     )}`
   }
