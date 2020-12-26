@@ -5,6 +5,8 @@
 
 trigger:
   - master
+pr:
+  - none
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -15,7 +17,7 @@ steps:
       versionSpec: '14.x'
     displayName: Install Node.js
 
-  - script: npm install
+  - script: npm ci
     displayName: Install dependencies
 
   - script: npm run lint
