@@ -9,8 +9,8 @@ import {
 
 export interface IDocument {
   id?: string
-  createdDate?: Date
-  updatedDate?: Date
+  createdDate?: Date | string
+  updatedDate?: Date | string
 }
 
 export default class BaseContainer<T extends IDocument> {
@@ -53,7 +53,7 @@ export default class BaseContainer<T extends IDocument> {
 
   async getAll(): Promise<T[]> {
     const { resources } = await this.container.items.readAll<T>().fetchAll()
-    this.container.item
+
     return resources
   }
 

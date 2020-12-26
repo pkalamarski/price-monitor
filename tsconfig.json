@@ -12,6 +12,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
+    "paths": {
+      "~*": ["*"]
+    },
     "skipLibCheck": true,
     "lib": ["es2017", "dom", "esnext"],
     "jsx": "react"

@@ -5,7 +5,7 @@ import BaseContainer, { IDocument } from './BaseModel'
 export interface IPrice {
   main: number
   preDiscount: number
-  date: Date
+  date: Date | string
 }
 
 export interface IPriceData extends IDocument {

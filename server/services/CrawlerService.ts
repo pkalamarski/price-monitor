@@ -46,10 +46,8 @@ class CrawlerService {
 
     let itemTimes: number[] = []
 
-    for (const product of products) {
+    for (const [index, product] of products.entries()) {
       const itemStart = new Date()
-
-      const index = products.indexOf(product)
 
       const { productPriceData, strippedHost, siteMapping } = this.getSetupData(
         product,

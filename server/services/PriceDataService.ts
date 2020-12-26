@@ -3,7 +3,7 @@ import { Injectable } from '@decorators/di'
 import PriceData, { IPriceData } from '../models/PriceData'
 
 import { logVerbose } from '../logger'
-import getNewestPrice from '../utility/getNewestPrice'
+import { getNewestPrice } from '../utility/sortPrices'
 
 interface IFetchedData {
   mainPrice: number
