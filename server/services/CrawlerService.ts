@@ -1,6 +1,6 @@
 import got from 'got'
 import cheerio from 'cheerio'
-import puppeteer from 'puppeteer'
+import puppeteer, { JSHandle } from 'puppeteer'
 import { Inject, Injectable } from '@decorators/di'
 
 import Products, { IProduct } from '../models/Products'
@@ -126,11 +126,18 @@ class CrawlerService {
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 120000 })
 
     const tagsContent = await page.evaluate(
-      (priceSelector, preDiscountSelector) => ({
-        mainPrice: document.querySelector(priceSelector)?.innerText,
-        preDiscountPrice: document.querySelector(preDiscountSelector)?.innerText
-      }),
-      [priceSelector, preDiscountSelector]
+      ({ priceSelector, preDiscountSelector }) => {
+        const mainPriceNode = document.querySelector(priceSelector)
+        const preDiscountPriceNode = preDiscountSelector
+          ? document.querySelector(preDiscountSelector)
+          : undefined
+
+        return {
+          mainPrice: mainPriceNode?.innerText || '',
+          preDiscountPrice: preDiscountPriceNode?.innerText || ''
+        }
+      },
+      { priceSelector, preDiscountSelector }
     )
 
     return {
@@ -156,7 +163,7 @@ class CrawlerService {
 
     const { preDiscountSelector, priceSelector } = siteMapping
 
-    const page = await got(url, { headers: requestHeaders })
+    const page = await got(url, { headers: requestHeaders, timeout: 120000 })
     const $ = cheerio.load(page.body)
 
     const rawPreDiscountPrice = $(preDiscountSelector).text()

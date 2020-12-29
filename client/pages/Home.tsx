@@ -12,9 +12,11 @@ const Home = (): JSX.Element => {
 
   return (
     <>
-      {products.map((p, i) => (
-        <PricePanel key={i} product={p} />
-      ))}
+      {products
+        .sort((a, b) => (a.label > b.label ? 1 : -1))
+        .map((p, i) => (
+          <PricePanel key={i} product={p} />
+        ))}
     </>
   )
 }

@@ -2,7 +2,9 @@ import winston from 'winston'
 
 export const logger = winston.createLogger({
   format: winston.format.simple(),
-  transports: [new winston.transports.Console()]
+  transports: [
+    new winston.transports.Console({ level: process.env.LOG_LEVEL || 'info' })
+  ]
 })
 
 export const logVerbose = (message: string): winston.Logger =>

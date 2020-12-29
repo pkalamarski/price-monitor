@@ -24,6 +24,8 @@ class MonitorService {
 
     if (ENV !== 'dev') {
       this.startPriceMonitor()
+    } else {
+      this.crawlerService.fetchPrices()
     }
   }
 
