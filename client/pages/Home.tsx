@@ -5,18 +5,18 @@ import PricePanel from '../components/PricePanel'
 
 import { IProduct } from '../../server/models/Products'
 
-const Index = (): JSX.Element => {
+const Home = (): JSX.Element => {
   const [{ data: products, loading }] = useAxios<IProduct[]>('/api/products')
 
   if (loading || !products) return <div>Loading</div>
 
   return (
-    <main className="container">
+    <>
       {products.map((p, i) => (
         <PricePanel key={i} product={p} />
       ))}
-    </main>
+    </>
   )
 }
 
-export default Index
+export default Home

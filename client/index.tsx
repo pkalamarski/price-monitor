@@ -1,11 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { hot } from 'react-hot-loader'
 
-import Page from './pages/page'
-
-const PriceMonitor = () => <Page />
-
-const App = hot(module)(PriceMonitor)
+import App from './App'
 
 ReactDOM.render(<App />, document.getElementById('root'))

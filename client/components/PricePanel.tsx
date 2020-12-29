@@ -1,5 +1,6 @@
 import React from 'react'
 import useAxios from 'axios-hooks'
+import { Divider, Skeleton, Space, Typography } from 'antd'
 
 import { IProduct } from '../../server/models/Products'
 import { IPriceData } from '../../server/models/PriceData'
@@ -7,46 +8,60 @@ import { shortDate } from '../../server/utility/formatDate'
 import filterPrices from '../../server/utility/filterPrices'
 import { sortByNewest } from '../../server/utility/sortPrices'
 
+const { Title, Link, Text, Paragraph } = Typography
+
 interface IProps {
   product: IProduct
 }
 
 const PricePanel = ({ product }: IProps): JSX.Element => {
-  const [{ data: priceData }] = useAxios<IPriceData>({
+  const [{ data: priceData, loading }] = useAxios<IPriceData>({
     url: '/api/productPrices',
     params: { productId: product.id }
   })
 
-  const hostName = new URL(product.url).host.split('www.').join('')
+  const sortedPrices = priceData
+    ? filterPrices(priceData.prices).sort(sortByNewest)
+    : []
+
+  const currency = priceData?.currency || ''
 
   return (
-    <div style={{ marginBottom: 10 }}>
-      <span style={{ display: 'flex' }}>
-        <h3 style={{ marginRight: 10 }}>{product.label}</h3>
-        <h5 style={{ fontStyle: 'italic' }}>
-          <a href={product.url}>{hostName}</a>
-        </h5>
-      </span>
-      <div style={{ display: 'flex' }}>
-        {priceData &&
-          filterPrices(priceData.prices)
-            .sort(sortByNewest)
+    <Paragraph>
+      <Space>
+        <Title level={5}>
+          <Link href={product.url}>{product.label}</Link>
+        </Title>
+      </Space>
+      <div>
+        <Skeleton
+          loading={loading}
+          active
+          title={false}
+          paragraph={{ rows: 2 }}
+        >
+          {sortedPrices
             .map((price, i) => (
-              <span
-                style={{ flexFlow: 'column', marginRight: 15, minWidth: 150 }}
+              <Space
                 key={i}
+                style={{
+                  minWidth: 100,
+                  fontWeight: i === 0 ? 600 : 'normal'
+                }}
+                direction="vertical"
               >
-                <p>
-                  {price.main} {priceData.currency}
-                </p>
+                <Text>
+                  {price.main} {currency}
+                </Text>
 
-                <p>{shortDate(new Date(price.date))}</p>
-              </span>
+                <Text>{shortDate(new Date(price.date))}</Text>
+              </Space>
             ))
             .slice(0, 5)}
+        </Skeleton>
       </div>
-      <hr />
-    </div>
+      <Divider />
+    </Paragraph>
   )
 }
 
