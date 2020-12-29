@@ -1,6 +1,6 @@
 import got from 'got'
 import cheerio from 'cheerio'
-import puppeteer, { JSHandle } from 'puppeteer'
+import puppeteer from 'puppeteer'
 import { Inject, Injectable } from '@decorators/di'
 
 import Products, { IProduct } from '../models/Products'
