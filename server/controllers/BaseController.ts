@@ -25,7 +25,7 @@ class BaseController {
 
     if (!productId) {
       logError('Invalid productId')
-      res.send('Invalid productId')
+      res.status(400).send('Invalid productId')
       return
     }
 
