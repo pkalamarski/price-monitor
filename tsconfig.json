@@ -19,6 +19,6 @@
     "lib": ["es2017", "dom", "esnext"],
     "jsx": "react"
   },
-  "exclude": ["dist_node/**/*", "dist_web/**/*"],
+  "exclude": ["node_modules", "dist_node/**/*", "dist_web/**/*"],
   "include": ["client/**/*", "server/**/*", "@types/**/*"]
 }

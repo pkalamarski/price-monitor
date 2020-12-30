@@ -4,6 +4,7 @@ import { Divider, Skeleton, Space, Typography } from 'antd'
 
 import { IProduct } from '../../server/models/Products'
 import { IPriceData } from '../../server/models/PriceData'
+import { shortDate } from '../../server/utility/formatDate'
 import filterPrices from '../../server/utility/filterPrices'
 import { sortByNewest } from '../../server/utility/sortPrices'
 
@@ -20,9 +21,6 @@ const PricePanel = ({ product }: IProps): JSX.Element => {
   })
 
   const sortedPrices = priceData ? priceData.prices.sort(sortByNewest) : []
-  if (product.label.includes('QP')) {
-    console.log(sortedPrices)
-  }
 
   const filteredPrices = priceData ? filterPrices(sortedPrices) : []
   const currency = priceData?.currency || ''
@@ -52,12 +50,7 @@ const PricePanel = ({ product }: IProps): JSX.Element => {
             >
               <Text>Not available</Text>
 
-              <Text>
-                {new Date(sortedPrices[0].date).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'short'
-                })}
-              </Text>
+              <Text>{shortDate(new Date(sortedPrices[0].date))}</Text>
             </Space>
           )}
           {filteredPrices
@@ -74,12 +67,7 @@ const PricePanel = ({ product }: IProps): JSX.Element => {
                   {price.main} {currency}
                 </Text>
 
-                <Text>
-                  {new Date(price.date).toLocaleDateString('en-GB', {
-                    day: 'numeric',
-                    month: 'short'
-                  })}
-                </Text>
+                <Text>{shortDate(new Date(price.date))}</Text>
               </Space>
             ))
             .slice(0, 5)}

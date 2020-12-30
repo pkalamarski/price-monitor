@@ -11,13 +11,11 @@ import MonitorService from '../services/MonitorService'
 import PriceDataService from '../services/PriceDataService'
 
 @Controller('/api')
-class BaseController {
+export default class BaseController {
   constructor(
     @Inject(MonitorService) private monitorService: MonitorService,
     @Inject(PriceDataService) private priceDataService: PriceDataService
-  ) {
-    console.log(monitorService)
-  }
+  ) {}
 
   @Get('/products')
   async products(req: Request, res: Response): Promise<void> {
@@ -28,9 +26,9 @@ class BaseController {
 
   @Get('/product-order')
   async productOrder(req: Request, res: Response): Promise<void> {
-    // const productOrder = await this.priceDataService.getSortedPriceData()
+    const productOrder = await this.priceDataService.getSortedPriceData()
 
-    res.json({})
+    res.json(productOrder)
   }
 
   @Get('/product-prices')
@@ -59,5 +57,3 @@ class BaseController {
     res.status(200).send('OK')
   }
 }
-
-export default BaseController

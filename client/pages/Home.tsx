@@ -2,10 +2,9 @@ import useAxios from 'axios-hooks'
 import React from 'react'
 
 import PricePanel from '../components/PricePanel'
+import PageLoader from '../components/PageLoader'
 
 import { IProduct } from '../../server/models/Products'
-import sortByName from '../../server/utility/sortByName'
-import LoadingIndicator from '../components/LoadingIndicator'
 import { IProductOrder } from '../../server/services/PriceDataService'
 
 const Home = (): JSX.Element => {
@@ -15,7 +14,7 @@ const Home = (): JSX.Element => {
   ] = useAxios<IProductOrder>('/api/product-order')
 
   if (loading || orderLoading || !products || !productOrder)
-    return <LoadingIndicator />
+    return <PageLoader />
 
   return (
     <>

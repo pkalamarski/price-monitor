@@ -3,7 +3,7 @@ import { Injectable } from '@decorators/di'
 import PriceData, { IPriceData } from '../models/PriceData'
 
 import { logVerbose } from '../logger'
-import { getNewestPrice, sortByNewest } from '../utility/sortPrices'
+import { getNewestPrice } from '../utility/sortPrices'
 
 export interface IProductOrder {
   [productId: string]: number
@@ -39,8 +39,8 @@ export default class PriceDataService {
 
     const sortedPriceData = allPriceData.sort(
       (a, b) =>
-        new Date(a.prices.sort(sortByNewest)[0].date).getTime() -
-        new Date(b.prices.sort(sortByNewest)[0].date).getTime()
+        new Date(getNewestPrice(b.prices).date).getTime() -
+        new Date(getNewestPrice(a.prices).date).getTime()
     )
 
     const orderData: IProductOrder = sortedPriceData.reduce(

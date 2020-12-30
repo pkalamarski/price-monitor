@@ -3,14 +3,14 @@ import { LoadingOutlined } from '@ant-design/icons'
 
 import React from 'react'
 
-const LoadingIndicator = () => {
+const PageLoader = () => {
   const loadingIndicator = <LoadingOutlined style={{ fontSize: 48 }} spin />
 
   return (
     <Space
       style={{
         width: '100%',
-        height: '100%',
+        height: '75vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -21,4 +21,4 @@ const LoadingIndicator = () => {
   )
 }
 
-export default LoadingIndicator
+export default PageLoader
