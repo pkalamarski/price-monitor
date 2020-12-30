@@ -6,27 +6,18 @@ import { logError, logInfo } from '../logger'
 import CrawlerService from './CrawlerService'
 import { toLocaleString } from '../utility/formatDate'
 
-const {
-  ENV,
-  SERVER_URL,
-  PRICE_JOB_CRON_TIME,
-  HEALTH_JOB_CRON_TIME
-} = process.env
+const { SERVER_URL, PRICE_JOB_CRON_TIME, HEALTH_JOB_CRON_TIME } = process.env
 
 @Injectable()
-class MonitorService {
+export default class MonitorService {
   public priceMonitorJob: CronJob
   public healthMonitorJob: CronJob
 
-  constructor(@Inject(CrawlerService) private crawlerService: CrawlerService) {
+  constructor(@Inject(CrawlerService) private crawlerService: CrawlerService) {}
+
+  initialize() {
     this.priceMonitorJob = this.createPriceMonitorJob()
     this.healthMonitorJob = this.createHealthMonitorJob()
-
-    if (ENV !== 'dev') {
-      this.startPriceMonitor()
-    } else {
-      this.crawlerService.fetchPrices()
-    }
   }
 
   async manualPriceCheck(): Promise<void> {
@@ -35,7 +26,7 @@ class MonitorService {
     await this.crawlerService.fetchPrices()
   }
 
-  private startPriceMonitor() {
+  async startPriceMonitor() {
     logInfo(`💰 Starting price monitor`)
 
     this.priceMonitorJob.start()
@@ -92,5 +83,3 @@ class MonitorService {
     )}`
   }
 }
-
-export default MonitorService

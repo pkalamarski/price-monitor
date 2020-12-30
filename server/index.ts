@@ -6,6 +6,7 @@ dotenv.config()
 
 import router from './routes'
 import { logInfo } from './logger'
+import initializeMonitor from './initializeMonitor'
 
 const app = express()
 const port = 8080
@@ -27,4 +28,5 @@ app.get('*', (req, res) =>
 
 app.listen(port, () => {
   logInfo(`🚀 Server listening on port ${port}`)
+  initializeMonitor()
 })

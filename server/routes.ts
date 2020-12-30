@@ -1,5 +1,5 @@
-import { attachControllers } from '@decorators/express'
 import { Router } from 'express'
+import { attachControllers } from '@decorators/express'
 
 import BaseController from './controllers/BaseController'
 

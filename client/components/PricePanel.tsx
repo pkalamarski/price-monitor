@@ -16,15 +16,15 @@ interface IProps {
 
 const PricePanel = ({ product }: IProps): JSX.Element => {
   const [{ data: priceData, loading }] = useAxios<IPriceData>({
-    url: '/api/productPrices',
+    url: '/api/product-prices',
     params: { productId: product.id }
   })
 
-  const sortedPrices = priceData
-    ? filterPrices(priceData.prices).sort(sortByNewest)
-    : []
+  const sortedPrices = priceData ? priceData.prices.sort(sortByNewest) : []
 
+  const filteredPrices = priceData ? filterPrices(sortedPrices) : []
   const currency = priceData?.currency || ''
+  const currentlyUnavailable = sortedPrices[0]?.main === 0
 
   return (
     <Paragraph>
@@ -40,7 +40,20 @@ const PricePanel = ({ product }: IProps): JSX.Element => {
           title={false}
           paragraph={{ rows: 2 }}
         >
-          {sortedPrices
+          {currentlyUnavailable && (
+            <Space
+              style={{
+                minWidth: 100,
+                fontWeight: 800
+              }}
+              direction="vertical"
+            >
+              <Text>Not available</Text>
+
+              <Text>{shortDate(new Date(sortedPrices[0].date))}</Text>
+            </Space>
+          )}
+          {filteredPrices
             .map((price, i) => (
               <Space
                 key={i}

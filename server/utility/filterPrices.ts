@@ -1,9 +1,10 @@
 import { IPrice } from '../models/PriceData'
+import { sortByNewest } from './sortPrices'
 
 const filterPrices = (prices: IPrice[]): IPrice[] => {
-  const sortedPrices = prices.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  )
+  if (prices.length <= 1) return prices
+
+  const sortedPrices = prices.sort(sortByNewest)
 
   const uniquePrices = sortedPrices.reduce((allPrices, price, index, array) => {
     const previousPrice = array[index - 1]

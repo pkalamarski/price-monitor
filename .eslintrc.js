@@ -27,7 +27,6 @@ module.exports = {
     // Configuration
     '@typescript-eslint/no-unused-vars': [
       'warn',
-      // process.env.ENV !== 'dev' ? 'error' : 'warn',
       {
         vars: 'all',
         args: 'none',

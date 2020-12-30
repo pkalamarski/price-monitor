@@ -22,7 +22,7 @@ interface IFetchedPrices {
 }
 
 @Injectable()
-class CrawlerService {
+export default class CrawlerService {
   constructor(
     @Inject(PriceDataService) private priceDataService: PriceDataService
   ) {}
@@ -213,5 +213,3 @@ class CrawlerService {
     return { high, avg, low }
   }
 }
-
-export default CrawlerService

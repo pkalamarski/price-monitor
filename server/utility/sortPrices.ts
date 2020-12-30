@@ -10,3 +10,6 @@ export const getNewestPrice = (prices: IPrice[]): IPrice => {
 
 export const sortByNewest = (a: IPrice, b: IPrice): number =>
   new Date(b.date).getTime() - new Date(a.date).getTime()
+
+export const sortByOldest = (a: IPrice, b: IPrice): number =>
+  new Date(a.date).getTime() - new Date(b.date).getTime()
