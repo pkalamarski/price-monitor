@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ESNext",
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist_node",
@@ -16,7 +16,7 @@
       "~*": ["*"]
     },
     "skipLibCheck": true,
-    "lib": ["es2017", "dom", "esnext"],
+    "lib": ["esnext"],
     "jsx": "react"
   },
   "exclude": ["node_modules", "dist_node/**/*", "dist_web/**/*"],
