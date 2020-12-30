@@ -4,7 +4,6 @@ import { Divider, Skeleton, Space, Typography } from 'antd'
 
 import { IProduct } from '../../server/models/Products'
 import { IPriceData } from '../../server/models/PriceData'
-import { shortDate } from '../../server/utility/formatDate'
 import filterPrices from '../../server/utility/filterPrices'
 import { sortByNewest } from '../../server/utility/sortPrices'
 
@@ -16,15 +15,18 @@ interface IProps {
 
 const PricePanel = ({ product }: IProps): JSX.Element => {
   const [{ data: priceData, loading }] = useAxios<IPriceData>({
-    url: '/api/productPrices',
+    url: '/api/product-prices',
     params: { productId: product.id }
   })
 
-  const sortedPrices = priceData
-    ? filterPrices(priceData.prices).sort(sortByNewest)
-    : []
+  const sortedPrices = priceData ? priceData.prices.sort(sortByNewest) : []
+  if (product.label.includes('QP')) {
+    console.log(sortedPrices)
+  }
 
+  const filteredPrices = priceData ? filterPrices(sortedPrices) : []
   const currency = priceData?.currency || ''
+  const currentlyUnavailable = sortedPrices[0]?.main === 0
 
   return (
     <Paragraph>
@@ -40,7 +42,25 @@ const PricePanel = ({ product }: IProps): JSX.Element => {
           title={false}
           paragraph={{ rows: 2 }}
         >
-          {sortedPrices
+          {currentlyUnavailable && (
+            <Space
+              style={{
+                minWidth: 100,
+                fontWeight: 800
+              }}
+              direction="vertical"
+            >
+              <Text>Not available</Text>
+
+              <Text>
+                {new Date(sortedPrices[0].date).toLocaleDateString('en-GB', {
+                  day: 'numeric',
+                  month: 'short'
+                })}
+              </Text>
+            </Space>
+          )}
+          {filteredPrices
             .map((price, i) => (
               <Space
                 key={i}
@@ -54,7 +74,12 @@ const PricePanel = ({ product }: IProps): JSX.Element => {
                   {price.main} {currency}
                 </Text>
 
-                <Text>{shortDate(new Date(price.date))}</Text>
+                <Text>
+                  {new Date(price.date).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short'
+                  })}
+                </Text>
               </Space>
             ))
             .slice(0, 5)}

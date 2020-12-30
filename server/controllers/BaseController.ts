@@ -2,15 +2,22 @@ import { Inject } from '@decorators/di'
 import { Request, Response } from 'express'
 import { Controller, Get } from '@decorators/express'
 
+import { logError } from '../logger'
+
 import Products from '../models/Products'
 import PriceData from '../models/PriceData'
 
 import MonitorService from '../services/MonitorService'
-import { logError } from '../logger'
+import PriceDataService from '../services/PriceDataService'
 
 @Controller('/api')
 class BaseController {
-  constructor(@Inject(MonitorService) private monitorService: MonitorService) {}
+  constructor(
+    @Inject(MonitorService) private monitorService: MonitorService,
+    @Inject(PriceDataService) private priceDataService: PriceDataService
+  ) {
+    console.log(monitorService)
+  }
 
   @Get('/products')
   async products(req: Request, res: Response): Promise<void> {
@@ -19,7 +26,14 @@ class BaseController {
     res.json(products)
   }
 
-  @Get('/productPrices')
+  @Get('/product-order')
+  async productOrder(req: Request, res: Response): Promise<void> {
+    // const productOrder = await this.priceDataService.getSortedPriceData()
+
+    res.json({})
+  }
+
+  @Get('/product-prices')
   async productPrices(req: Request, res: Response): Promise<void> {
     const productId = req.query.productId as string
 

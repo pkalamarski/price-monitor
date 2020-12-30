@@ -1,6 +1,6 @@
 import { CosmosClient } from '@azure/cosmos'
 
-import { logInfo } from '../logger'
+import { logInfo } from './logger'
 
 const endpoint = process.env.DB_ENDPOINT
 const key = process.env.DB_ACCESS_KEY

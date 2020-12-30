@@ -17,7 +17,14 @@ const PriceMonitor = () => (
         <Menu.Item key="3">Manage mapping</Menu.Item>
       </Menu>
     </Header>
-    <Content style={{ padding: '30px 300px', marginTop: 64 }}>
+    <Content
+      style={{
+        padding: '30px 300px',
+        marginTop: 64,
+        height: '100%',
+        width: '100%'
+      }}
+    >
       <Home />
     </Content>
   </Layout>

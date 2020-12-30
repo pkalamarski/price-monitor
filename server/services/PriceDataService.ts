@@ -3,7 +3,11 @@ import { Injectable } from '@decorators/di'
 import PriceData, { IPriceData } from '../models/PriceData'
 
 import { logVerbose } from '../logger'
-import { getNewestPrice } from '../utility/sortPrices'
+import { getNewestPrice, sortByNewest } from '../utility/sortPrices'
+
+export interface IProductOrder {
+  [productId: string]: number
+}
 
 interface IFetchedData {
   mainPrice: number
@@ -11,7 +15,7 @@ interface IFetchedData {
 }
 
 @Injectable()
-class PriceDataService {
+export default class PriceDataService {
   async saveProductPrice(
     productId: string,
     productPriceData: IPriceData,
@@ -28,6 +32,23 @@ class PriceDataService {
     } else {
       this.insertNewPrice(productPriceData, fetchedData)
     }
+  }
+
+  async getSortedPriceData(): Promise<IProductOrder> {
+    const allPriceData = await PriceData.getAll()
+
+    const sortedPriceData = allPriceData.sort(
+      (a, b) =>
+        new Date(a.prices.sort(sortByNewest)[0].date).getTime() -
+        new Date(b.prices.sort(sortByNewest)[0].date).getTime()
+    )
+
+    const orderData: IProductOrder = sortedPriceData.reduce(
+      (orderData, priceData, i) => ({ ...orderData, [priceData.productId]: i }),
+      {}
+    )
+
+    return orderData
   }
 
   private async addNewDocument(
@@ -72,5 +93,3 @@ class PriceDataService {
     ])
   }
 }
-
-export default PriceDataService

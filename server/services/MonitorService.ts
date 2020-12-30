@@ -14,7 +14,7 @@ const {
 } = process.env
 
 @Injectable()
-class MonitorService {
+export default class MonitorService {
   public priceMonitorJob: CronJob
   public healthMonitorJob: CronJob
 
@@ -24,7 +24,9 @@ class MonitorService {
 
     if (ENV !== 'dev') {
       this.startPriceMonitor()
-    } else {
+    }
+
+    if (PRICE_JOB_CRON_TIME && ENV === 'dev') {
       this.crawlerService.fetchPrices()
     }
   }
@@ -92,5 +94,3 @@ class MonitorService {
     )}`
   }
 }
-
-export default MonitorService
