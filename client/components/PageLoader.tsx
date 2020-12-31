@@ -2,7 +2,7 @@ import { Space, Spin } from 'antd'
 
 import React from 'react'
 
-const PageLoader = () => (
+const PageLoader: React.FC = () => (
   <Space
     style={{
       width: '100%',

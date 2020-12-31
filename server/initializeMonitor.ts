@@ -6,7 +6,7 @@ import MonitorService from './services/MonitorService'
 
 const { ENV, PRICE_JOB_CRON_TIME } = process.env
 
-const initializeMonitor = () => {
+const initializeMonitor = (): void => {
   if (!PRICE_JOB_CRON_TIME) {
     logInfo('PRICE_JOB_CRON_TIME undefined - monitor not initialized')
     return
