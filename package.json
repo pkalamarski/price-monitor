@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@azure/cosmos": "^3.9.3",
+    "@babel/runtime": "^7.12.5",
     "@decorators/di": "^1.0.2",
     "@decorators/express": "^2.4.0",
     "antd": "^4.9.4",
@@ -43,6 +44,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
     "@hot-loader/react-dom": "^17.0.1",
     "@types/cheerio": "^0.22.22",
     "@types/cron": "^1.7.2",

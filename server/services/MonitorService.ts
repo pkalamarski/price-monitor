@@ -15,18 +15,12 @@ export default class MonitorService {
 
   constructor(@Inject(CrawlerService) private crawlerService: CrawlerService) {}
 
-  initialize() {
+  initialize(): void {
     this.priceMonitorJob = this.createPriceMonitorJob()
     this.healthMonitorJob = this.createHealthMonitorJob()
   }
 
-  async manualPriceCheck(): Promise<void> {
-    logInfo(`💰 Price check triggered`)
-
-    await this.crawlerService.fetchPrices()
-  }
-
-  async startPriceMonitor() {
+  startPriceMonitor(): void {
     logInfo(`💰 Starting price monitor`)
 
     this.priceMonitorJob.start()
@@ -35,7 +29,13 @@ export default class MonitorService {
     logInfo(this.parseNextJobMessage(this.priceMonitorJob.nextDate().toDate()))
   }
 
-  private startHealthMonitor() {
+  async manualPriceCheck(): Promise<void> {
+    logInfo(`💰 Price check triggered`)
+
+    await this.crawlerService.fetchPrices()
+  }
+
+  private startHealthMonitor(): void {
     logInfo('💗 Starting health monitor')
 
     this.healthMonitorJob.start()
