@@ -55,16 +55,23 @@ export default class CrawlerService {
         mapping
       )
 
-      if (checkpoints.includes(index + 1)) {
-        logInfo(`Checkpoint: ${index + 1} of ${products.length} prices checked`)
-      }
-
       if (!siteMapping) {
         logError(`No mapping for host: ${strippedHost}`)
+
+        if (checkpoints.includes(index + 1)) {
+          logInfo(
+            `Checkpoint: ${index + 1} of ${products.length} prices checked`
+          )
+        }
+
         continue
       }
 
       await this.fetchProductData(page, product, siteMapping, productPriceData)
+
+      if (checkpoints.includes(index + 1)) {
+        logInfo(`Checkpoint: ${index + 1} of ${products.length} prices checked`)
+      }
 
       itemTimes = [...itemTimes, new Date().getTime() - itemStart.getTime()]
     }

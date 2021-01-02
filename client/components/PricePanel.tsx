@@ -16,7 +16,7 @@ interface IProps {
 
 const PricePanel = ({ product }: IProps): JSX.Element => {
   const [{ data: priceData, loading }] = useAxios<IPriceData>({
-    url: '/api/product-prices',
+    url: '/api/products/prices',
     params: { productId: product.id }
   })
 
