@@ -8,10 +8,10 @@ import { IProduct } from '../../server/models/Products'
 import { IProductOrder } from '../../server/services/PriceDataService'
 
 const Home = (): JSX.Element => {
-  const [{ data: products, loading }] = useAxios<IProduct[]>('/api/products')
+  const [{ data: products, loading }] = useAxios<IProduct[]>('/api/products/')
   const [
     { data: productOrder, loading: orderLoading }
-  ] = useAxios<IProductOrder>('/api/product-order')
+  ] = useAxios<IProductOrder>('/api/products/order')
 
   if (loading || orderLoading || !products || !productOrder)
     return <PageLoader />

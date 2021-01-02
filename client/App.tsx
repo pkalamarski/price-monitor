@@ -24,7 +24,7 @@ const PriceMonitor = () => {
 
     if (!user) return
 
-    await Axios.post('/api/logout')
+    await Axios.post('/api/auth/logout')
 
     history.push('/login')
   }

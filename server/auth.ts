@@ -4,8 +4,8 @@ import { IUser } from './models/Users'
 
 const routes = [
   /^\/health/,
-  /^\/api\/login/,
-  /^\/api\/logout/,
+  /^\/api\/auth\/login/,
+  /^\/api\/auth\/logout/,
   /^\/login/,
 
   /^\/favicon.*.ico/,

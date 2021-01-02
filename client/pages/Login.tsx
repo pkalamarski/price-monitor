@@ -15,7 +15,7 @@ const Login: React.FC = () => {
 
   const onSubmit = async (values: ILoginValues) => {
     try {
-      const { data } = await Axios.post('/api/login', values)
+      const { data } = await Axios.post('/api/auth/login', values)
 
       if (data?.token) {
         history.push('/')
