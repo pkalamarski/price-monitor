@@ -121,7 +121,7 @@ export default class CrawlerService {
   ): Promise<IFetchedPrices> {
     logVerbose('Fetching with Puppeteer')
 
-    const { preDiscountSelector, priceSelector } = siteMapping
+    const { preDiscountSelector, priceSelector, isMetaTag } = siteMapping
 
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 120000 })
 
@@ -140,9 +140,23 @@ export default class CrawlerService {
       { priceSelector, preDiscountSelector }
     )
 
+    const metaTag =
+      isMetaTag &&
+      (await page.$eval(priceSelector, (element: any) => element.content)) // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    const rawPrices = !isMetaTag
+      ? {
+          mainPrice: tagsContent.mainPrice,
+          preDiscountPrice: tagsContent.preDiscountPrice
+        }
+      : {
+          mainPrice: metaTag || '',
+          preDiscountPrice: ''
+        }
+
     return {
-      mainPrice: this.parsePrice(tagsContent?.mainPrice),
-      preDiscountPrice: this.parsePrice(tagsContent?.preDiscountPrice)
+      mainPrice: this.parsePrice(rawPrices.mainPrice),
+      preDiscountPrice: this.parsePrice(rawPrices.preDiscountPrice)
     }
   }
 

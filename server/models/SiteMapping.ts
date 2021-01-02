@@ -8,6 +8,7 @@ export interface ISiteMapping extends IDocument {
   preDiscountSelector?: string
   priceSelector: string
   usePuppeteer?: boolean
+  isMetaTag?: boolean
 }
 
 const SiteMapping = new BaseContainer<ISiteMapping>(
