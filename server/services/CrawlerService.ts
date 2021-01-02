@@ -142,7 +142,7 @@ export default class CrawlerService {
 
     const metaTag =
       isMetaTag &&
-      (await page.$eval(priceSelector, (element: any) => element.content))
+      (await page.$eval(priceSelector, (element: any) => element.content)) // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const rawPrices = !isMetaTag
       ? {

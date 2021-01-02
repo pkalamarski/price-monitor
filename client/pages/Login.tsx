@@ -10,7 +10,7 @@ interface ILoginValues {
   password: string
 }
 
-const Login = () => {
+const Login: React.FC = () => {
   const history = useHistory()
 
   const onSubmit = async (values: ILoginValues) => {

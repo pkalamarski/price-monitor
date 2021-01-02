@@ -4,7 +4,7 @@ import { Inject } from '@decorators/di'
 import { Request, Response } from 'express'
 import { Controller, Get, Post } from '@decorators/express'
 
-import { logError, logInfo } from '../logger'
+import { logError } from '../logger'
 
 import Users from '../models/Users'
 import Products from '../models/Products'
@@ -12,6 +12,7 @@ import PriceData from '../models/PriceData'
 
 import MonitorService from '../services/MonitorService'
 import PriceDataService from '../services/PriceDataService'
+import { AuthRequest } from '~server/auth'
 
 const { COOKIE, ACCESS_TOKEN_SECRET } = process.env
 
@@ -23,7 +24,7 @@ export default class BaseController {
   ) {}
 
   @Get('/user')
-  user(req: any, res: Response): void {
+  user(req: AuthRequest, res: Response): void {
     res.json(req.user || {})
   }
 
