@@ -12,7 +12,7 @@ import PriceData from '../models/PriceData'
 
 import MonitorService from '../services/MonitorService'
 import PriceDataService from '../services/PriceDataService'
-import { AuthRequest } from '~server/auth'
+import { AuthRequest } from '../auth'
 
 const { COOKIE, ACCESS_TOKEN_SECRET } = process.env
 
