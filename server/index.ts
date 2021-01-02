@@ -2,9 +2,13 @@ import path from 'path'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 dotenv.config()
 
+import auth from './auth'
 import router from './routes'
+
 import { logInfo } from './logger'
 import initializeMonitor from './initializeMonitor'
 
@@ -12,6 +16,12 @@ const app = express()
 const port = 8080
 
 app.use(cors())
+
+app.use(bodyParser.json())
+
+app.use(cookieParser())
+
+app.use(auth)
 
 app.get('/health', async (req, res) => {
   res.send('OK')
