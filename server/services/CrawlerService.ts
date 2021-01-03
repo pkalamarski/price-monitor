@@ -41,7 +41,27 @@ export default class CrawlerService {
       Math.floor(p * products.length)
     )
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+    const browser = await puppeteer.launch({
+      args: [
+        '--disable-canvas-aa', // Disable antialiasing on 2d canvas
+        '--disable-2d-canvas-clip-aa', // Disable antialiasing on 2d canvas clips
+        '--disable-gl-drawing-for-tests', // BEST OPTION EVER! Disables GL drawing operations which produce pixel output. With this the GL output will not be correct but tests will run faster.
+        '--disable-dev-shm-usage', // ???
+        '--no-zygote', // wtf does that mean ?
+        '--use-gl=swiftshader', // better cpu usage with --use-gl=desktop rather than --use-gl=swiftshader, still needs more testing.
+        '--enable-webgl',
+        '--hide-scrollbars',
+        '--mute-audio',
+        '--no-first-run',
+        '--disable-infobars',
+        '--disable-breakpad',
+        //'--ignore-gpu-blacklist',
+        '--window-size=1280,1024', // see defaultViewport
+        '--user-data-dir=./chromeData', // created in index.js, guess cache folder ends up inside too.
+        '--no-sandbox', // meh but better resource comsuption
+        '--disable-setuid-sandbox'
+      ]
+    })
     const page = await browser.newPage()
 
     let itemTimes: number[] = []
@@ -130,7 +150,7 @@ export default class CrawlerService {
 
     const { preDiscountSelector, priceSelector, isMetaTag } = siteMapping
 
-    await page.goto(url, { waitUntil: 'networkidle0', timeout: 120000 })
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
     const tagsContent = await page.evaluate(
       ({ priceSelector, preDiscountSelector }) => {
@@ -147,19 +167,10 @@ export default class CrawlerService {
       { priceSelector, preDiscountSelector }
     )
 
-    const metaTag =
-      isMetaTag &&
-      (await page.$eval(priceSelector, (element: any) => element.content)) // eslint-disable-line @typescript-eslint/no-explicit-any
-
-    const rawPrices = !isMetaTag
-      ? {
-          mainPrice: tagsContent.mainPrice,
-          preDiscountPrice: tagsContent.preDiscountPrice
-        }
-      : {
-          mainPrice: metaTag || '',
-          preDiscountPrice: ''
-        }
+    const rawPrices = {
+      mainPrice: tagsContent.mainPrice,
+      preDiscountPrice: tagsContent.preDiscountPrice
+    }
 
     return {
       mainPrice: this.parsePrice(rawPrices.mainPrice),
@@ -182,21 +193,20 @@ export default class CrawlerService {
       'X-Forwarded-Proto': 'https'
     }
 
-    const { preDiscountSelector, priceSelector } = siteMapping
+    const { preDiscountSelector, priceSelector, isMetaTag } = siteMapping
 
-    const page = await got(url, { headers: requestHeaders, timeout: 120000 })
+    const page = await got(url, { headers: requestHeaders, timeout: 20000 })
     const $ = cheerio.load(page.body)
 
     const rawPreDiscountPrice = $(preDiscountSelector).text()
-    const rawNewPrice = $(priceSelector).text()
+    const rawMainPrice = !isMetaTag
+      ? $(priceSelector).text()
+      : $(priceSelector).attr('content')
 
-    const mainPrice = rawNewPrice ? this.parsePrice(rawNewPrice) : 0
-    const preDiscountPrice =
-      rawNewPrice && rawPreDiscountPrice
-        ? this.parsePrice(rawPreDiscountPrice)
-        : 0
-
-    return { mainPrice, preDiscountPrice }
+    return {
+      mainPrice: this.parsePrice(rawMainPrice || ''),
+      preDiscountPrice: this.parsePrice(rawPreDiscountPrice || '')
+    }
   }
 
   private getSetupData(
