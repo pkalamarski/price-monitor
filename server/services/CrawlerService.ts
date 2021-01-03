@@ -43,22 +43,21 @@ export default class CrawlerService {
 
     const browser = await puppeteer.launch({
       args: [
-        '--disable-canvas-aa', // Disable antialiasing on 2d canvas
-        '--disable-2d-canvas-clip-aa', // Disable antialiasing on 2d canvas clips
-        '--disable-gl-drawing-for-tests', // BEST OPTION EVER! Disables GL drawing operations which produce pixel output. With this the GL output will not be correct but tests will run faster.
-        '--disable-dev-shm-usage', // ???
-        '--no-zygote', // wtf does that mean ?
-        '--use-gl=swiftshader', // better cpu usage with --use-gl=desktop rather than --use-gl=swiftshader, still needs more testing.
+        '--disable-canvas-aa',
+        '--disable-2d-canvas-clip-aa',
+        '--disable-gl-drawing-for-tests',
+        '--disable-dev-shm-usage',
+        '--no-zygote',
+        '--use-gl=swiftshader',
         '--enable-webgl',
         '--hide-scrollbars',
         '--mute-audio',
         '--no-first-run',
         '--disable-infobars',
         '--disable-breakpad',
-        //'--ignore-gpu-blacklist',
-        '--window-size=1280,1024', // see defaultViewport
-        '--user-data-dir=./chromeData', // created in index.js, guess cache folder ends up inside too.
-        '--no-sandbox', // meh but better resource comsuption
+        '--window-size=1280,1024',
+        '--user-data-dir=./chromeData',
+        '--no-sandbox',
         '--disable-setuid-sandbox'
       ]
     })
