@@ -148,7 +148,7 @@ export default class CrawlerService {
   ): Promise<IFetchedPrices> {
     logVerbose('Fetching with Puppeteer')
 
-    const { preDiscountSelector, priceSelector, isMetaTag } = siteMapping
+    const { preDiscountSelector, priceSelector } = siteMapping
 
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
