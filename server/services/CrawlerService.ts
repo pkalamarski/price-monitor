@@ -41,7 +41,26 @@ export default class CrawlerService {
       Math.floor(p * products.length)
     )
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
+    const browser = await puppeteer.launch({
+      args: [
+        '--disable-canvas-aa',
+        '--disable-2d-canvas-clip-aa',
+        '--disable-gl-drawing-for-tests',
+        '--disable-dev-shm-usage',
+        '--no-zygote',
+        '--use-gl=swiftshader',
+        '--enable-webgl',
+        '--hide-scrollbars',
+        '--mute-audio',
+        '--no-first-run',
+        '--disable-infobars',
+        '--disable-breakpad',
+        '--window-size=1280,1024',
+        '--user-data-dir=./chromeData',
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+      ]
+    })
     const page = await browser.newPage()
 
     let itemTimes: number[] = []
@@ -128,9 +147,9 @@ export default class CrawlerService {
   ): Promise<IFetchedPrices> {
     logVerbose('Fetching with Puppeteer')
 
-    const { preDiscountSelector, priceSelector, isMetaTag } = siteMapping
+    const { preDiscountSelector, priceSelector } = siteMapping
 
-    await page.goto(url, { waitUntil: 'networkidle0', timeout: 120000 })
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 })
 
     const tagsContent = await page.evaluate(
       ({ priceSelector, preDiscountSelector }) => {
@@ -147,19 +166,10 @@ export default class CrawlerService {
       { priceSelector, preDiscountSelector }
     )
 
-    const metaTag =
-      isMetaTag &&
-      (await page.$eval(priceSelector, (element: any) => element.content)) // eslint-disable-line @typescript-eslint/no-explicit-any
-
-    const rawPrices = !isMetaTag
-      ? {
-          mainPrice: tagsContent.mainPrice,
-          preDiscountPrice: tagsContent.preDiscountPrice
-        }
-      : {
-          mainPrice: metaTag || '',
-          preDiscountPrice: ''
-        }
+    const rawPrices = {
+      mainPrice: tagsContent.mainPrice,
+      preDiscountPrice: tagsContent.preDiscountPrice
+    }
 
     return {
       mainPrice: this.parsePrice(rawPrices.mainPrice),
@@ -182,21 +192,20 @@ export default class CrawlerService {
       'X-Forwarded-Proto': 'https'
     }
 
-    const { preDiscountSelector, priceSelector } = siteMapping
+    const { preDiscountSelector, priceSelector, isMetaTag } = siteMapping
 
-    const page = await got(url, { headers: requestHeaders, timeout: 120000 })
+    const page = await got(url, { headers: requestHeaders, timeout: 20000 })
     const $ = cheerio.load(page.body)
 
     const rawPreDiscountPrice = $(preDiscountSelector).text()
-    const rawNewPrice = $(priceSelector).text()
+    const rawMainPrice = !isMetaTag
+      ? $(priceSelector).text()
+      : $(priceSelector).attr('content')
 
-    const mainPrice = rawNewPrice ? this.parsePrice(rawNewPrice) : 0
-    const preDiscountPrice =
-      rawNewPrice && rawPreDiscountPrice
-        ? this.parsePrice(rawPreDiscountPrice)
-        : 0
-
-    return { mainPrice, preDiscountPrice }
+    return {
+      mainPrice: this.parsePrice(rawMainPrice || ''),
+      preDiscountPrice: this.parsePrice(rawPreDiscountPrice || '')
+    }
   }
 
   private getSetupData(
