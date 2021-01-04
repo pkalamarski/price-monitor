@@ -46,6 +46,9 @@ node_modules/
 # Optional eslint cache
 .eslintcache
 
+# Puppeteer cache
+chromeData
+
 # Optional REPL history
 .node_repl_history
 
