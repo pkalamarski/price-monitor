@@ -8,6 +8,11 @@ export interface ISiteMapping extends IDocument {
   preDiscountSelector?: string
   priceSelector: string
   usePuppeteer?: boolean
+  puppeteerWaitUntil?:
+    | 'domcontentloaded'
+    | 'load'
+    | 'networkidle0'
+    | 'networkidle2'
   isMetaTag?: boolean
 }
 
