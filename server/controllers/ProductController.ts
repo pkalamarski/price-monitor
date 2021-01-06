@@ -4,7 +4,7 @@ import { Controller, Delete, Get, Post } from '@decorators/express'
 
 import { logError } from '../logger'
 
-import Products, { IProduct } from '../models/Products'
+import Products from '../models/Products'
 import PriceData from '../models/PriceData'
 
 import PriceDataService from '../services/PriceDataService'

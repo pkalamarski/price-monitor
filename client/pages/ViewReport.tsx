@@ -20,7 +20,7 @@ const ViewReport: React.FC = () => {
 
   const addMsSuffix = (val: string): string => `${val} ms`
 
-  const columns: ColumnsType<{}> = [
+  const columns: ColumnsType<IReport> = [
     {
       title: 'Date',
       dataIndex: 'date',

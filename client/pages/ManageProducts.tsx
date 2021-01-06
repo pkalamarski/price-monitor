@@ -1,13 +1,10 @@
 import React from 'react'
 
-import { Form, Input, Button, Space, Typography, Table, Popconfirm } from 'antd'
+import { Button, Space, Table, Popconfirm } from 'antd'
 import useAxios from 'axios-hooks'
 import { IProduct } from '../../server/models/Products'
 import { ColumnsType } from 'antd/lib/table'
 import Axios from 'axios'
-import Paragraph from 'antd/lib/typography/Paragraph'
-
-const { Title } = Typography
 
 const ManageProducts: React.FC = () => {
   const [{ data: products, loading }, refetch] = useAxios<IProduct[]>({

@@ -6,7 +6,7 @@ import Login from './pages/Login'
 import ViewReport from './pages/ViewReport'
 import ManageProducts from './pages/ManageProducts'
 
-const Routes = () => (
+const Routes = (): JSX.Element => (
   <Switch>
     <Route path="/" exact component={Home} />
     <Route path="/login" component={Login} />
