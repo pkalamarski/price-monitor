@@ -1,33 +1,28 @@
-import Axios from 'axios'
+import useAxios from 'axios-hooks'
 import { hot } from 'react-hot-loader'
+import { useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
-import { Switch, Route, Link, useHistory } from 'react-router-dom'
 
-import { Layout, Menu, Spin } from 'antd'
+import { Layout } from 'antd'
 import 'antd/dist/antd.css'
 
-import Home from './pages/Home'
-import Login from './pages/Login'
-import getUser from './utility/getUser'
+import PageHeader from './layout/PageHeader'
 
-const { Header, Content } = Layout
+import Routes from './Routes'
+
+import { IUser } from '../server/models/Users'
+
+const { Content } = Layout
 
 const PriceMonitor = () => {
   const history = useHistory()
 
   const [loginPathChange, setLoginPathChange] = useState(false)
 
-  const { user, loading: userLoading, refetch } = getUser()
-
-  const logout = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.preventDefault()
-
-    if (!user) return
-
-    await Axios.post('/api/auth/logout')
-
-    history.push('/login')
-  }
+  const [{ data: user, loading: userLoading }, refetch] = useAxios<IUser>({
+    method: 'GET',
+    url: '/api/user'
+  })
 
   history.listen(() => {
     const shouldRefetch =
@@ -43,27 +38,7 @@ const PriceMonitor = () => {
 
   return (
     <>
-      <Header style={{ position: 'fixed', width: '100%', zIndex: 1 }}>
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
-          <Menu.Item key="1">
-            <Link to="/">Home</Link>
-          </Menu.Item>
-
-          <Menu.Item key="2">
-            <Link to="/products">Manage products</Link>
-          </Menu.Item>
-
-          <Menu.Item key="3">
-            <Link to="/mapping">Manage mapping</Link>
-          </Menu.Item>
-
-          <Menu.Item key="4" style={{ float: 'right' }}>
-            <Link to={!user ? '/login' : ''} onClick={logout}>
-              {!userLoading ? <>{user?.fullName || 'Login'}</> : <Spin />}
-            </Link>
-          </Menu.Item>
-        </Menu>
-      </Header>
+      <PageHeader user={user} userLoading={userLoading} />
       <Content
         style={{
           padding: '30px 300px',
@@ -72,10 +47,7 @@ const PriceMonitor = () => {
           width: '100%'
         }}
       >
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/login" component={Login} />
-        </Switch>
+        <Routes />
       </Content>
     </>
   )

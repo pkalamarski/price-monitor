@@ -1,10 +1,10 @@
 import { Inject } from '@decorators/di'
 import { Request, Response } from 'express'
-import { Controller, Get } from '@decorators/express'
+import { Controller, Delete, Get, Post } from '@decorators/express'
 
 import { logError } from '../logger'
 
-import Products from '../models/Products'
+import Products, { IProduct } from '../models/Products'
 import PriceData from '../models/PriceData'
 
 import PriceDataService from '../services/PriceDataService'
@@ -20,6 +20,35 @@ export default class BaseController {
     const products = await Products.getAll()
 
     res.json(products)
+  }
+
+  @Post('/')
+  async addProduct(req: Request, res: Response): Promise<void> {
+    const { url, label = url, category = 'defaultCategory' } = req.body
+
+    if (!url) {
+      res.send(400)
+      return
+    }
+
+    const product = await Products.create({
+      label,
+      url,
+      category,
+      createdDate: new Date(),
+      updatedDate: new Date()
+    })
+
+    res.json(product)
+  }
+
+  @Delete('/')
+  async deleteProduct(req: Request, res: Response): Promise<void> {
+    const { productId, category } = req.body
+
+    await Products.delete(productId, category)
+
+    res.send(200)
   }
 
   @Get('/order')
