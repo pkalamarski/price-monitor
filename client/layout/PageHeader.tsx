@@ -2,7 +2,7 @@ import { Menu, Layout, Spin } from 'antd'
 import Axios from 'axios'
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { IUser } from '~server/models/Users'
+import { IUser } from '../../server/models/Users'
 
 const { Header } = Layout
 
