@@ -83,6 +83,10 @@ export default class BaseContainer<T extends IDocument> {
     return response
   }
 
+  async delete(id: string, partitionKeyValue: string): Promise<void> {
+    await this.accessItem(id, partitionKeyValue).delete()
+  }
+
   private async queryBuilder(whereOptions: Partial<T>, getOne?: boolean) {
     const query = Object.keys(whereOptions).reduce(
       (query, key, i) => (query += `${i ? 'AND ' : ' '}c.${key} = @${key}`),

@@ -15,7 +15,7 @@ export default class AuthController {
 
     const user = await Users.getOne({ username })
 
-    const userPasswordMatch = bcrypt.compareSync(password, user.hash)
+    const userPasswordMatch = bcrypt.compareSync(password, user?.hash)
 
     if (user && userPasswordMatch) {
       const token = jwt.sign(

@@ -24,6 +24,9 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint', 'react-hooks'],
   rules: {
+    'react/prop-types': 'off',
+    'react/display-name': 'off',
+
     // Configuration
     '@typescript-eslint/no-unused-vars': [
       'error',

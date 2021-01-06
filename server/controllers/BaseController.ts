@@ -6,6 +6,7 @@ import { logError } from '../logger'
 import { AuthRequest } from '../auth'
 
 import MonitorService from '../services/MonitorService'
+import Report from '../models/Report'
 
 @Controller('/api')
 export default class BaseController {
@@ -26,5 +27,12 @@ export default class BaseController {
 
     this.monitorService.manualPriceCheck()
     res.status(200).send('OK')
+  }
+
+  @Get('/report')
+  async report(req: Request, res: Response): Promise<void> {
+    const report = await Report.getAll()
+
+    res.json(report)
   }
 }
