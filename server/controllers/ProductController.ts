@@ -19,27 +19,29 @@ export default class BaseController {
   async products(req: Request, res: Response): Promise<void> {
     const products = await Products.getAll()
 
-    res.json(products)
+    res.json(products.reverse())
   }
 
   @Post('/')
   async addProduct(req: Request, res: Response): Promise<void> {
-    const { url, label = url, category = 'defaultCategory' } = req.body
+    const { url, label, category = 'defaultCategory' } = req.body
 
-    if (!url) {
+    if (!url || !label) {
       res.sendStatus(400)
       return
     }
 
-    const product = await Products.create({
-      label,
-      url,
-      category,
-      createdDate: new Date(),
-      updatedDate: new Date()
-    })
+    try {
+      await Products.create({
+        label,
+        url,
+        category
+      })
+    } catch {
+      // ignore error
+    }
 
-    res.json(product)
+    res.sendStatus(200)
   }
 
   @Delete('/')

@@ -3,8 +3,8 @@ import BaseContainer, { IDocument } from './BaseModel'
 
 export interface ISiteMapping extends IDocument {
   host: string
-  imageSelector: string
-  nameSelector: string
+  imageSelector?: string
+  nameSelector?: string
   preDiscountSelector?: string
   priceSelector: string
   usePuppeteer?: boolean

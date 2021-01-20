@@ -1,14 +1,18 @@
 import React from 'react'
 import useAxios from 'axios-hooks'
-import { Space, Table } from 'antd'
+import Axios from 'axios'
+import { Button, Modal, Space, Table } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 
 import { ISiteMapping } from '../../server/models/SiteMapping'
 
 import PageLoader from '../components/PageLoader'
+import AddMappingForm, { IMappingValues } from '../components/AddMappingForm'
 
 const ManageMapping: React.FC = () => {
-  const [{ data: mapping, loading }] = useAxios<ISiteMapping[]>({
+  const [visible, setVisible] = React.useState(false)
+
+  const [{ data: mapping, loading }, refetch] = useAxios<ISiteMapping[]>({
     url: '/api/mapping/'
   })
 
@@ -50,19 +54,49 @@ const ManageMapping: React.FC = () => {
     {
       title: 'Use Puppeteer?',
       dataIndex: 'usePuppeteer',
-      key: 'usePuppeteer'
+      key: 'usePuppeteer',
+      render: (val: boolean) => (val ? 'true' : 'false')
     },
     {
       title: 'isMetaTag?',
       dataIndex: 'isMetaTag',
-      key: 'isMetaTag'
+      key: 'isMetaTag',
+      render: (val: boolean) => (val ? 'true' : 'false')
     }
   ]
 
+  const showModal = () => {
+    setVisible(true)
+  }
+
+  const addNewItem = async (values: IMappingValues) => {
+    try {
+      await Axios.post('/api/mapping', values)
+    } catch {
+      // ignore error
+    }
+    setVisible(false)
+    refetch()
+  }
+
   return (
-    <Space style={{ display: 'flex', justifyContent: 'center' }}>
-      <Table dataSource={dataSource} columns={columns} rowKey="id" />
-    </Space>
+    <>
+      <Modal title="Title" visible={visible} footer={null}>
+        <AddMappingForm onSubmit={addNewItem} />
+      </Modal>
+
+      <Space
+        style={{ display: 'flex', justifyContent: 'center', marginBottom: 15 }}
+      >
+        <Button type="primary" onClick={showModal}>
+          Add new item
+        </Button>
+      </Space>
+
+      <Space style={{ display: 'flex', justifyContent: 'center' }}>
+        <Table dataSource={dataSource} columns={columns} rowKey="id" />
+      </Space>
+    </>
   )
 }
 
