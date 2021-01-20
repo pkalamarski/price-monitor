@@ -1,7 +1,9 @@
-import { Menu, Layout, Spin } from 'antd'
 import Axios from 'axios'
 import React from 'react'
+import { Menu, Spin } from 'antd'
+import Layout from 'antd/lib/layout'
 import { Link, useHistory } from 'react-router-dom'
+
 import { IUser } from '../../server/models/Users'
 
 const { Header } = Layout
@@ -15,18 +17,18 @@ const PageHeader: React.FC<IProps> = ({ user, userLoading }) => {
   const history = useHistory()
 
   const logout = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    e.preventDefault()
+    e?.preventDefault()
 
     if (!user) return
 
     await Axios.post('/api/auth/logout')
 
-    history.push('/login')
+    history?.push('/login')
   }
 
   return (
     <Header style={{ position: 'fixed', width: '100%', zIndex: 1 }}>
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+      <Menu theme="dark" mode="horizontal">
         <Menu.Item key="1">
           <Link to="/">Home</Link>
         </Menu.Item>

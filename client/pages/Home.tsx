@@ -7,7 +7,7 @@ import PageLoader from '../components/PageLoader'
 import { IProduct } from '../../server/models/Products'
 import { IProductOrder } from '../../server/services/PriceDataService'
 
-const Home = (): JSX.Element => {
+const Home: React.FC = () => {
   const [{ data: products, loading }] = useAxios<IProduct[]>('/api/products/')
   const [
     { data: productOrder, loading: orderLoading }
