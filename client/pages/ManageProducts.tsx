@@ -1,17 +1,19 @@
 import React from 'react'
-
-import { Button, Space, Table, Popconfirm } from 'antd'
-import useAxios from 'axios-hooks'
-import { IProduct } from '../../server/models/Products'
-import { ColumnsType } from 'antd/lib/table'
 import Axios from 'axios'
+import useAxios from 'axios-hooks'
+import { Button, Space, Popconfirm } from 'antd'
+import Table, { ColumnsType } from 'antd/es/table'
+
+import { IProduct } from '../../server/models/Products'
+
+import PageLoader from '../components/PageLoader'
 
 const ManageProducts: React.FC = () => {
   const [{ data: products, loading }, refetch] = useAxios<IProduct[]>({
     url: '/api/products/'
   })
 
-  if (loading || !products) return <>loading</>
+  if (loading || !products) return <PageLoader />
 
   const deleteProduct = async (productId: string, category: string) => {
     await Axios.delete('/api/products', {
@@ -24,11 +26,12 @@ const ManageProducts: React.FC = () => {
     refetch()
   }
 
-  const dataSource = products.map(({ label, url, id, category }) => ({
+  const dataSource = products.map(({ label, url, id = '', category = '' }) => ({
+    id,
     label,
     url,
-    edit: { id: id || '', category: category || '' },
-    delete: { id: id || '', category: category || '' }
+    edit: { id, category },
+    delete: { id, category }
   }))
 
   const columns: ColumnsType<{
@@ -72,7 +75,7 @@ const ManageProducts: React.FC = () => {
 
   return (
     <Space style={{ display: 'flex', justifyContent: 'center' }}>
-      <Table dataSource={dataSource} columns={columns} />
+      <Table dataSource={dataSource} columns={columns} rowKey="id" />
     </Space>
   )
 }

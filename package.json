@@ -5,7 +5,7 @@
   "main": "server/index.ts",
   "scripts": {
     "start": "node dist_node/index.js",
-    "build-client": "parcel build client/index.html --out-dir dist_web",
+    "build-client": "node client/scripts/fix-rc-table-source-code.js && parcel build client/index.html --out-dir dist_web",
     "build-server": "parcel build server/index.ts --target node --out-dir dist_node",
     "build": "npm run build-client && npm run build-server",
     "client": "parcel watch client/index.html --out-dir dist_web",

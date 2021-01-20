@@ -6,6 +6,7 @@ import { ColumnsType } from 'antd/lib/table'
 import { IReport } from '../../server/models/Report'
 import { toLocaleString } from '../../server/utility/formatDate'
 import { IProduct } from '../../server/models/Products'
+import PageLoader from '../components/PageLoader'
 
 const ViewReport: React.FC = () => {
   const [{ data: reportData, loading }] = useAxios<IReport[]>({
@@ -16,7 +17,8 @@ const ViewReport: React.FC = () => {
     url: '/api/products/'
   })
 
-  if (loading || !reportData || !products || productLoading) return <>loading</>
+  if (loading || !reportData || !products || productLoading)
+    return <PageLoader />
 
   const addMsSuffix = (val: string): string => `${val} ms`
 
@@ -52,7 +54,7 @@ const ViewReport: React.FC = () => {
       render: (id: string) => {
         const product = products.find((p) => p.id === id)
 
-        if (!product) return <p>Item removed</p>
+        if (!product) return 'Item removed'
 
         return <a href={product.url}>{product.label}</a>
       }
@@ -76,7 +78,7 @@ const ViewReport: React.FC = () => {
 
   return (
     <Space style={{ display: 'flex', justifyContent: 'center' }}>
-      <Table dataSource={sortedReport} columns={columns} />
+      <Table dataSource={sortedReport} columns={columns} rowKey="id" />
     </Space>
   )
 }

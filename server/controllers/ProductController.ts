@@ -27,7 +27,7 @@ export default class BaseController {
     const { url, label = url, category = 'defaultCategory' } = req.body
 
     if (!url) {
-      res.send(400)
+      res.sendStatus(400)
       return
     }
 
@@ -48,7 +48,7 @@ export default class BaseController {
 
     await Products.delete(productId, category)
 
-    res.send(200)
+    res.sendStatus(200)
   }
 
   @Get('/order')
