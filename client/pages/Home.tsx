@@ -6,6 +6,7 @@ import PageLoader from '../components/PageLoader'
 
 import { IProduct } from '../../server/models/Products'
 import { IProductOrder } from '../../server/services/PriceDataService'
+import { Content } from 'antd/lib/layout/layout'
 
 const Home: React.FC = () => {
   const [{ data: products, loading }] = useAxios<IProduct[]>('/api/products/')
@@ -17,7 +18,14 @@ const Home: React.FC = () => {
     return <PageLoader />
 
   return (
-    <>
+    <Content
+      style={{
+        padding: '30px 300px',
+        marginTop: 64,
+        height: '100%',
+        width: '100%'
+      }}
+    >
       {products
         .sort(
           ({ id: idA }, { id: idB }): number =>
@@ -26,7 +34,7 @@ const Home: React.FC = () => {
         .map((p, i) => (
           <PricePanel key={i} product={p} />
         ))}
-    </>
+    </Content>
   )
 }
 

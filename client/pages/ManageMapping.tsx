@@ -8,6 +8,7 @@ import { ISiteMapping } from '../../server/models/SiteMapping'
 
 import PageLoader from '../components/PageLoader'
 import AddMappingForm, { IMappingValues } from '../components/AddMappingForm'
+import { Content } from 'antd/lib/layout/layout'
 
 const ManageMapping: React.FC = () => {
   const [visible, setVisible] = React.useState(false)
@@ -80,7 +81,14 @@ const ManageMapping: React.FC = () => {
   }
 
   return (
-    <>
+    <Content
+      style={{
+        padding: '30px',
+        marginTop: 64,
+        height: '100%',
+        width: '100%'
+      }}
+    >
       <Modal title="Title" visible={visible} footer={null}>
         <AddMappingForm onSubmit={addNewItem} />
       </Modal>
@@ -96,7 +104,7 @@ const ManageMapping: React.FC = () => {
       <Space style={{ display: 'flex', justifyContent: 'center' }}>
         <Table dataSource={dataSource} columns={columns} rowKey="id" />
       </Space>
-    </>
+    </Content>
   )
 }
 

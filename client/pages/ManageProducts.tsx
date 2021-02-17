@@ -8,6 +8,7 @@ import { IProduct } from '../../server/models/Products'
 
 import PageLoader from '../components/PageLoader'
 import AddProductForm, { IProductValues } from '../components/AddProductForm'
+import { Content } from 'antd/lib/layout/layout'
 
 const ManageProducts: React.FC = () => {
   const [visible, setVisible] = React.useState(false)
@@ -30,7 +31,7 @@ const ManageProducts: React.FC = () => {
   }
 
   const dataSource = products.map(({ label, url, id = '', category = '' }) => ({
-    id,
+    productId: id,
     label,
     url,
     delete: { id, category }
@@ -38,6 +39,7 @@ const ManageProducts: React.FC = () => {
 
   const columns: ColumnsType<{
     label: string
+    productId: string
     url: string
     delete: { id: string; category: string }
   }> = [
@@ -45,6 +47,11 @@ const ManageProducts: React.FC = () => {
       title: 'Label',
       dataIndex: 'label',
       key: 'label'
+    },
+    {
+      title: 'Product ID',
+      dataIndex: 'productId',
+      key: 'productId'
     },
     {
       title: 'Url',
@@ -69,10 +76,6 @@ const ManageProducts: React.FC = () => {
     }
   ]
 
-  const showModal = () => {
-    setVisible(true)
-  }
-
   const addNewItem = async (values: IProductValues) => {
     try {
       await Axios.post('/api/products', values)
@@ -84,7 +87,14 @@ const ManageProducts: React.FC = () => {
   }
 
   return (
-    <>
+    <Content
+      style={{
+        padding: '30px 90px',
+        marginTop: 64,
+        height: '100%',
+        width: '100%'
+      }}
+    >
       <Modal title="Title" visible={visible} footer={null}>
         <AddProductForm onSubmit={addNewItem} />
       </Modal>
@@ -92,7 +102,7 @@ const ManageProducts: React.FC = () => {
       <Space
         style={{ display: 'flex', justifyContent: 'center', marginBottom: 15 }}
       >
-        <Button type="primary" onClick={showModal}>
+        <Button type="primary" onClick={() => setVisible(true)}>
           Add new item
         </Button>
       </Space>
@@ -100,7 +110,7 @@ const ManageProducts: React.FC = () => {
       <Space style={{ display: 'flex', justifyContent: 'center' }}>
         <Table dataSource={dataSource} columns={columns} rowKey="id" />
       </Space>
-    </>
+    </Content>
   )
 }
 

@@ -7,6 +7,7 @@ import { IReport } from '../../server/models/Report'
 import { toLocaleString } from '../../server/utility/formatDate'
 import { IProduct } from '../../server/models/Products'
 import PageLoader from '../components/PageLoader'
+import { Content } from 'antd/lib/layout/layout'
 
 const ViewReport: React.FC = () => {
   const [{ data: reportData, loading }] = useAxios<IReport[]>({
@@ -77,9 +78,18 @@ const ViewReport: React.FC = () => {
   )
 
   return (
-    <Space style={{ display: 'flex', justifyContent: 'center' }}>
-      <Table dataSource={sortedReport} columns={columns} rowKey="id" />
-    </Space>
+    <Content
+      style={{
+        padding: '30px',
+        marginTop: 64,
+        height: '100%',
+        width: '100%'
+      }}
+    >
+      <Space style={{ display: 'flex', justifyContent: 'center' }}>
+        <Table dataSource={sortedReport} columns={columns} rowKey="id" />
+      </Space>
+    </Content>
   )
 }
 
