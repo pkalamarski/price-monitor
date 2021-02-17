@@ -39,16 +39,7 @@ const PriceMonitor = () => {
   return (
     <>
       <PageHeader user={user} userLoading={userLoading} />
-      <Content
-        style={{
-          padding: '30px 300px',
-          marginTop: 64,
-          height: '100%',
-          width: '100%'
-        }}
-      >
-        <Routes />
-      </Content>
+      <Routes />
     </>
   )
 }
