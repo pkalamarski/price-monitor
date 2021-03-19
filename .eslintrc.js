@@ -26,6 +26,7 @@ module.exports = {
   rules: {
     'react/prop-types': 'off',
     'react/display-name': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
 
     // Configuration
     '@typescript-eslint/no-unused-vars': [

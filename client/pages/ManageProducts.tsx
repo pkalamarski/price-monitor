@@ -1,17 +1,19 @@
 import React from 'react'
 import Axios from 'axios'
 import useAxios from 'axios-hooks'
-import { Button, Space, Popconfirm, Modal } from 'antd'
+import { Content } from 'antd/lib/layout/layout'
 import Table, { ColumnsType } from 'antd/es/table'
+import { Button, Space, Popconfirm, Modal, Input } from 'antd'
 
 import { IProduct } from '../../server/models/Products'
 
 import PageLoader from '../components/PageLoader'
+import EditableCell from '../components/EditableCell'
 import AddProductForm, { IProductValues } from '../components/AddProductForm'
-import { Content } from 'antd/lib/layout/layout'
 
 const ManageProducts: React.FC = () => {
   const [visible, setVisible] = React.useState(false)
+  const [nameFilter, setNameFilter] = React.useState('')
 
   const [{ data: products, loading }, refetch] = useAxios<IProduct[]>({
     url: '/api/products/'
@@ -30,12 +32,28 @@ const ManageProducts: React.FC = () => {
     refetch()
   }
 
-  const dataSource = products.map(({ label, url, id = '', category = '' }) => ({
-    productId: id,
-    label,
-    url,
-    delete: { id, category }
-  }))
+  const dataSource = products
+    .filter((p) => p.label.toLowerCase().includes(nameFilter.toLowerCase()))
+    .map(({ label, url, id = '', category = '' }) => ({
+      key: id,
+      productId: id,
+      label,
+      url,
+      delete: { id, category },
+      category
+    }))
+
+  const changeCategory = (productId: string) => async (
+    value: string
+  ): Promise<void> => {
+    try {
+      await Axios.patch(`/api/products/${productId}/category`, {
+        category: value
+      })
+    } catch (e) {
+      console.error('Something went wrong:', e)
+    }
+  }
 
   const columns: ColumnsType<{
     label: string
@@ -52,6 +70,19 @@ const ManageProducts: React.FC = () => {
       title: 'Product ID',
       dataIndex: 'productId',
       key: 'productId'
+    },
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+      render: (value: string, record: any) => (
+        <EditableCell
+          currentValue={value}
+          handleSave={changeCategory(record.productId)}
+        >
+          {value}
+        </EditableCell>
+      )
     },
     {
       title: 'Url',
@@ -100,15 +131,26 @@ const ManageProducts: React.FC = () => {
       </Modal>
 
       <Space
-        style={{ display: 'flex', justifyContent: 'center', marginBottom: 15 }}
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          marginBottom: 15
+        }}
       >
+        <Input
+          placeholder="Filter by name"
+          style={{ width: '250px', marginBottom: 15 }}
+          value={nameFilter}
+          onChange={(e) => setNameFilter(e.target.value)}
+        />
         <Button type="primary" onClick={() => setVisible(true)}>
           Add new item
         </Button>
       </Space>
 
       <Space style={{ display: 'flex', justifyContent: 'center' }}>
-        <Table dataSource={dataSource} columns={columns} rowKey="id" />
+        <Table dataSource={dataSource} columns={columns} rowKey="productId" />
       </Space>
     </Content>
   )

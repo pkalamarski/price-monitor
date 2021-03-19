@@ -1,6 +1,6 @@
 import { Inject } from '@decorators/di'
 import { Request, Response } from 'express'
-import { Controller, Delete, Get, Post } from '@decorators/express'
+import { Controller, Delete, Get, Patch, Post } from '@decorators/express'
 
 import { logError } from '../logger'
 
@@ -73,5 +73,37 @@ export default class BaseController {
     const priceData = await PriceData.getByProductId(productId)
 
     res.json(priceData)
+  }
+
+  @Get('/all-prices')
+  async allPrices(req: Request, res: Response): Promise<void> {
+    const priceData = await PriceData.getAll()
+
+    res.json(priceData)
+  }
+
+  @Get('/categories')
+  async categories(req: Request, res: Response): Promise<void> {
+    const products = await Products.getAll()
+    const categories = [...new Set(products.map((p) => p.category))]
+
+    res.json(categories)
+  }
+
+  @Patch('/:productId/category')
+  async changeCategory(req: Request, res: Response): Promise<void> {
+    const productId = req.params.productId as string
+    const newCategory = req.body.category as string
+
+    const product = await Products.getById(productId)
+
+    await Products.delete(product.id, product.category)
+
+    await Products.upsert({
+      ...product,
+      category: newCategory
+    })
+
+    res.sendStatus(201)
   }
 }
