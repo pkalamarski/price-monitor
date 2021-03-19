@@ -74,4 +74,19 @@ export default class BaseController {
 
     res.json(priceData)
   }
+
+  @Get('/all-prices')
+  async allPrices(req: Request, res: Response): Promise<void> {
+    const priceData = await PriceData.getAll()
+
+    res.json(priceData)
+  }
+
+  @Get('/categories')
+  async categories(req: Request, res: Response): Promise<void> {
+    const products = await Products.getAll()
+    const categories = [...new Set(products.map((p) => p.category))]
+
+    res.json(categories)
+  }
 }
