@@ -3,7 +3,7 @@ import Axios from 'axios'
 import useAxios from 'axios-hooks'
 import { Content } from 'antd/lib/layout/layout'
 import Table, { ColumnsType } from 'antd/es/table'
-import { Button, Space, Popconfirm, Modal, Input, Select } from 'antd'
+import { Button, Space, Popconfirm, Modal, Input } from 'antd'
 
 import { IProduct } from '../../server/models/Products'
 
