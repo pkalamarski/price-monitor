@@ -59,8 +59,10 @@ const Home: React.FC = () => {
       key: 'price',
       render: (price: IPrice) => (
         <div style={{ lineHeight: 2, fontWeight: 600 }}>
-          <div>{shortDate(new Date(price.date))}</div>
-          <div>{price.main ? `${price.main} PLN` : 'Not available'}</div>
+          <div>{shortDate(new Date(price?.date))}</div>
+          <div>
+            {price && price.main !== 0 ? `${price.main} PLN` : 'Not available'}
+          </div>
         </div>
       )
     },
@@ -70,8 +72,10 @@ const Home: React.FC = () => {
       key: 'prevPrice',
       render: (price: IPrice) => (
         <div style={{ lineHeight: 2 }}>
-          <div>{shortDate(new Date(price.date))}</div>
-          <div>{price.main ? `${price.main} PLN` : 'Not available'}</div>
+          <div>{price && shortDate(new Date(price?.date))}</div>
+          <div>
+            {price && price.main !== 0 ? `${price.main} PLN` : 'Not available'}
+          </div>
         </div>
       )
     },
@@ -138,7 +142,7 @@ const Home: React.FC = () => {
         >
           {categories.sort().map((cat) => (
             <Option key={cat} value={cat}>
-              {capitalizeFirstLetter(cat)}
+              {capitalizeFirstLetter(cat.split('-').join(' '))}
             </Option>
           ))}
         </Select>
@@ -158,8 +162,12 @@ const Home: React.FC = () => {
                   }}
                   direction="vertical"
                 >
-                  <Text>{shortDate(new Date(price.date))}</Text>
-                  <Text>{price.main} PLN</Text>
+                  <Text>{shortDate(new Date(price?.date))}</Text>
+                  <Text>
+                    {price && price.main !== 0
+                      ? `${price.main} PLN`
+                      : 'Not available'}
+                  </Text>
                 </Space>
               ))}
             </Space>
