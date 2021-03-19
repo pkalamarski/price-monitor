@@ -1,15 +1,6 @@
 import React from 'react'
 import useAxios from 'axios-hooks'
-import {
-  Button,
-  Input,
-  Popconfirm,
-  Select,
-  Space,
-  Table,
-  Typography,
-  Upload
-} from 'antd'
+import { Input, Select, Space, Table, Typography } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 
 import PageLoader from '../components/PageLoader'

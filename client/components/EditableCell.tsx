@@ -13,7 +13,7 @@ const EditableCell: React.FC<IProps> = ({ currentValue, handleSave }) => {
 
   useEffect(() => {
     if (editing) {
-      inputRef.current!.focus()
+      inputRef.current?.focus()
     }
   }, [editing])
 
