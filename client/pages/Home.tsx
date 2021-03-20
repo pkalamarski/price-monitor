@@ -9,6 +9,7 @@ import { IProduct } from '../../server/models/Products'
 import { IPrice, IPriceData } from '../../server/models/PriceData'
 
 import { shortDate } from '../../server/utility/formatDate'
+import filterPrices from '../../server/utility/filterPrices'
 import { sortByNewest } from '../../server/utility/sortPrices'
 import { IProductOrder } from '../../server/services/PriceDataService'
 
@@ -89,15 +90,29 @@ const Home: React.FC = () => {
 
       const sortedPrices = productPriceData?.prices.sort(sortByNewest)
 
+      const filteredPrices = filterPrices(sortedPrices || [])
+
+      let price: IPrice | null, prevPrice: IPrice | null
+
+      const isNotAvailable = sortedPrices ? sortedPrices[0]?.main === 0 : true
+
+      if (isNotAvailable) {
+        price = null
+        prevPrice = filteredPrices[0] || null
+      } else {
+        price = filteredPrices[0]
+        prevPrice = filteredPrices[1] || null
+      }
+
       return {
         key: i,
         name: product.label,
         url: product.url,
         shop: new URL(product.url).host,
         category: capitalizeFirstLetter(product.category.split('-').join(' ')),
-        price: sortedPrices ? sortedPrices[0] : null,
-        prevPrice: sortedPrices ? sortedPrices[1] : null,
-        sortedPrices
+        price,
+        prevPrice,
+        filteredPrices
       }
     })
 
@@ -144,7 +159,7 @@ const Home: React.FC = () => {
         expandable={{
           expandedRowRender: (row: any) => (
             <Space>
-              {row.sortedPrices.slice(0, 9).map((price, i) => (
+              {row.filteredPrices.slice(0, 9).map((price, i) => (
                 <Space
                   key={i}
                   style={{
