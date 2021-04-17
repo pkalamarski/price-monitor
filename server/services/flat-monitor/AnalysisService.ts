@@ -2,12 +2,20 @@ import { Injectable } from '@decorators/di'
 
 import { logInfo } from '../../logger'
 import { IPageData } from './ScanService'
-import MatchingOffers from '../../models/flat-monitor/MatchingOffers'
+import MatchingOffers, {
+  IMatchingOffer
+} from '../../models/flat-monitor/MatchingOffers'
 
 const allKeywords = process.env.FLAT_KEYWORDS?.split(',') || []
 
 @Injectable()
 export default class AnalysisService {
+  async getMatchingOffers(): Promise<IMatchingOffer[]> {
+    const matchingOffers = await MatchingOffers.getAll()
+
+    return matchingOffers
+  }
+
   async analysePages(pages: IPageData[]): Promise<void> {
     logInfo('Analysing new offers for potential keyword matches')
 

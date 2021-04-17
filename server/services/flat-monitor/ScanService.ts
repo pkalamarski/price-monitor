@@ -150,6 +150,6 @@ export default class ScanService {
     [0.2, 0.4, 0.6, 0.8, 1].map((p) => Math.floor(p * length))
 
   private logCheckpoint = (index: number, length: number): void => {
-    console.info(`Checkpoint: ${index + 1} of ${length} flats scanned`)
+    console.info(`Checkpoint: ${index + 1} of ${length} offers scanned`)
   }
 }

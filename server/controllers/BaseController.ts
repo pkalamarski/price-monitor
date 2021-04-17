@@ -5,7 +5,7 @@ import { Controller, Get } from '@decorators/express'
 import { logError } from '../logger'
 import { AuthRequest } from '../auth'
 
-import MonitorService from '../services/price-monitor/MonitorService'
+import MonitorService from '../services/price-monitor/PriceMonitorService'
 import Report from '../models/price-monitor/Report'
 
 @Controller('/api')

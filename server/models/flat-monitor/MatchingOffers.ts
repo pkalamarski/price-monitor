@@ -1,7 +1,7 @@
 import FlatMonitorDB from '../../databases/FlatMonitorData'
 import BaseContainer, { IDocument } from '../BaseModel'
 
-export interface IActiveOffer extends IDocument {
+export interface IMatchingOffer extends IDocument {
   url: string
   title: string
   price: number
@@ -9,9 +9,9 @@ export interface IActiveOffer extends IDocument {
   roomCount: number
 }
 
-const ActiveOffers = new BaseContainer<IActiveOffer>(
-  'ActiveOffers',
+const MatchingOffers = new BaseContainer<IMatchingOffer>(
+  'MatchingOffers',
   FlatMonitorDB
 )
 
-export default ActiveOffers
+export default MatchingOffers

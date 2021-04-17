@@ -1,8 +1,10 @@
 import { Container } from '@decorators/di'
-import { logInfo } from './logger'
-import CrawlerService from './services/price-monitor/CrawlerService'
 
-import MonitorService from './services/price-monitor/MonitorService'
+import { logInfo } from './logger'
+
+import CrawlerService from './services/price-monitor/CrawlerService'
+import FlatMonitorService from './services/flat-monitor/FlatMonitorService'
+import PriceMonitorService from './services/price-monitor/PriceMonitorService'
 
 const { ENV, PRICE_JOB_CRON_TIME } = process.env
 
@@ -12,13 +14,20 @@ const initializeMonitor = (): void => {
     return
   }
 
-  const monitorService = Container.get<MonitorService>(MonitorService)
+  const flatMonitorService = Container.get<FlatMonitorService>(
+    FlatMonitorService
+  )
+  const priceMonitorService = Container.get<PriceMonitorService>(
+    PriceMonitorService
+  )
   const crawlerService = Container.get<CrawlerService>(CrawlerService)
 
   if (ENV !== 'dev') {
-    monitorService.initialize()
+    flatMonitorService.initialize()
+    priceMonitorService.initialize()
 
-    monitorService.startPriceMonitor()
+    flatMonitorService.startFlatMonitor()
+    priceMonitorService.startPriceMonitor()
   } else if (ENV === 'dev') {
     crawlerService.fetchPrices()
   }

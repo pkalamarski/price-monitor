@@ -5,15 +5,24 @@ import { Controller, Get } from '@decorators/express'
 import { AuthRequest } from '../auth'
 
 import FlatMonitorService from '../services/flat-monitor/FlatMonitorService'
+import AnalysisService from '../services/flat-monitor/AnalysisService'
 
 @Controller('/api/flat')
 export default class BaseController {
   constructor(
-    @Inject(FlatMonitorService) private flatMonitorService: FlatMonitorService
+    @Inject(FlatMonitorService) private flatMonitorService: FlatMonitorService,
+    @Inject(AnalysisService) private analysisService: AnalysisService
   ) {}
 
+  @Get('/offers')
+  async matchingOffers(_req: AuthRequest, res: Response) {
+    const matchingOffers = await this.analysisService.getMatchingOffers()
+
+    res.json(matchingOffers)
+  }
+
   @Get('/check')
-  async offerCheck(_req: AuthRequest, res: Response) {
+  async triggerOfferCheck(_req: AuthRequest, res: Response) {
     await this.flatMonitorService.offerCheck()
 
     res.sendStatus(200)
