@@ -15,14 +15,14 @@ export default class BaseController {
   ) {}
 
   @Get('/offers')
-  async matchingOffers(_req: AuthRequest, res: Response) {
+  async matchingOffers(_req: AuthRequest, res: Response): Promise<void> {
     const matchingOffers = await this.analysisService.getMatchingOffers()
 
     res.json(matchingOffers)
   }
 
   @Get('/check')
-  async triggerOfferCheck(_req: AuthRequest, res: Response) {
+  async triggerOfferCheck(_req: AuthRequest, res: Response): Promise<void> {
     await this.flatMonitorService.offerCheck()
 
     res.sendStatus(200)

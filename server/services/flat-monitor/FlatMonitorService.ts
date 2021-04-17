@@ -44,7 +44,7 @@ export default class FlatMonitorService {
     return flatMonitorJob
   }
 
-  async offerCheck() {
+  async offerCheck(): Promise<void> {
     logInfo('JOB: Starting offer check job')
     const startTime = new Date()
 
