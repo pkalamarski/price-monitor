@@ -6,7 +6,7 @@ import { Content } from 'antd/lib/layout/layout'
 import PageLoader from '../components/PageLoader'
 
 import { IProduct } from '../../server/models/Products'
-import { IPrice, IPriceData } from '../../server/models/PriceData'
+import { IPrice, IPriceData } from '../../server/models/price-monitor/PriceData'
 
 import { shortDate } from '../../server/utility/formatDate'
 import filterPrices from '../../server/utility/filterPrices'
@@ -39,6 +39,7 @@ const Home: React.FC = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      width: 560,
       render: (value: string, product) => (
         <Title level={5}>
           <Link href={product.url}>{value}</Link>
@@ -49,9 +50,10 @@ const Home: React.FC = () => {
       title: 'Current price',
       dataIndex: 'price',
       key: 'price',
+      width: 130,
       render: (price: IPrice) => (
         <div style={{ lineHeight: 2, fontWeight: 600 }}>
-          <div>{shortDate(new Date(price?.date))}</div>
+          <div>{shortDate(new Date(price?.date || new Date()))}</div>
           <div>
             {price && price.main !== 0 ? `${price.main} PLN` : 'Not available'}
           </div>
@@ -62,6 +64,7 @@ const Home: React.FC = () => {
       title: 'Previous price',
       dataIndex: 'prevPrice',
       key: 'prevPrice',
+      width: 130,
       render: (price: IPrice) => (
         <div style={{ lineHeight: 2 }}>
           <div>{price && shortDate(new Date(price?.date))}</div>
@@ -97,7 +100,7 @@ const Home: React.FC = () => {
       const isNotAvailable = sortedPrices ? sortedPrices[0]?.main === 0 : true
 
       if (isNotAvailable) {
-        price = null
+        price = sortedPrices ? sortedPrices[0] : null
         prevPrice = filteredPrices[0] || null
       } else {
         price = filteredPrices[0]

@@ -1,9 +1,9 @@
 import { Injectable } from '@decorators/di'
 
-import PriceData, { IPriceData } from '../models/PriceData'
+import PriceData, { IPriceData } from '../../models/price-monitor/PriceData'
 
-import { logVerbose } from '../logger'
-import { getNewestPrice } from '../utility/sortPrices'
+import { logVerbose } from '../../logger'
+import { getNewestPrice } from '../../utility/sortPrices'
 
 export interface IProductOrder {
   [productId: string]: number

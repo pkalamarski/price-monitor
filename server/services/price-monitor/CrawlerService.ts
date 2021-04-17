@@ -3,15 +3,17 @@ import cheerio from 'cheerio'
 import puppeteer from 'puppeteer'
 import { Inject, Injectable } from '@decorators/di'
 
-import Report from '../models/Report'
-import Products, { IProduct } from '../models/Products'
-import PriceData, { IPriceData } from '../models/PriceData'
-import SiteMapping, { ISiteMapping } from '../models/SiteMapping'
+import Report from '../../models/price-monitor/Report'
+import Products, { IProduct } from '../../models/price-monitor/Products'
+import PriceData, { IPriceData } from '../../models/price-monitor/PriceData'
+import SiteMapping, {
+  ISiteMapping
+} from '../../models/price-monitor/SiteMapping'
 
 import PriceDataService from './PriceDataService'
 
-import timeElapsed from '../utility/timeElapsed'
-import { logError, logInfo, logVerbose } from '../logger'
+import timeElapsed from '../../utility/timeElapsed'
+import { logError, logInfo, logVerbose } from '../../logger'
 
 interface ITimeReport {
   productId: string

@@ -2,14 +2,14 @@ import Axios from 'axios'
 import { CronJob } from 'cron'
 import { Inject, Injectable } from '@decorators/di'
 
-import { logError, logInfo } from '../logger'
+import { logError, logInfo } from '../../logger'
 import CrawlerService from './CrawlerService'
-import { toLocaleString } from '../utility/formatDate'
+import { toLocaleString } from '../../utility/formatDate'
 
 const { SERVER_URL, PRICE_JOB_CRON_TIME, HEALTH_JOB_CRON_TIME } = process.env
 
 @Injectable()
-export default class MonitorService {
+export default class PriceMonitorService {
   public priceMonitorJob: CronJob
   public healthMonitorJob: CronJob
 
@@ -78,7 +78,7 @@ export default class MonitorService {
     const minutesTillJob =
       (nextStart.getTime() - new Date().getTime()) / 1000 / 60
 
-    return `⏭  Next job will start in ${minutesTillJob.toFixed()} minutes at ${toLocaleString(
+    return `⏭  Next price monitor job will start in ${minutesTillJob.toFixed()} minutes at ${toLocaleString(
       nextStart
     )}`
   }

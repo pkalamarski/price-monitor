@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken'
 import { NextFunction, Request, Response } from 'express'
-import { IUser } from './models/Users'
+import { IUser } from './models/price-monitor/Users'
 
 const routes = [
   /^\/health/,
+  /^\/api\/flat\/*/,
   /^\/api\/auth\/login/,
   /^\/api\/auth\/logout/,
   /^\/login/,

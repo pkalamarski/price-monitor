@@ -1,4 +1,4 @@
-import { IPrice } from '../models/PriceData'
+import { IPrice } from '../models/price-monitor/PriceData'
 import { sortByNewest } from './sortPrices'
 
 const filterPrices = (prices: IPrice[]): IPrice[] => {
