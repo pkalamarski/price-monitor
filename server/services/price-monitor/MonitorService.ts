@@ -2,9 +2,9 @@ import Axios from 'axios'
 import { CronJob } from 'cron'
 import { Inject, Injectable } from '@decorators/di'
 
-import { logError, logInfo } from '../logger'
+import { logError, logInfo } from '../../logger'
 import CrawlerService from './CrawlerService'
-import { toLocaleString } from '../utility/formatDate'
+import { toLocaleString } from '../../utility/formatDate'
 
 const { SERVER_URL, PRICE_JOB_CRON_TIME, HEALTH_JOB_CRON_TIME } = process.env
 

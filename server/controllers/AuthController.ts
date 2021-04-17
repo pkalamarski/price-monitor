@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { Request, Response } from 'express'
 import { Controller, Post } from '@decorators/express'
 
-import Users from '../models/Users'
+import Users from '../models/price-monitor/Users'
 
 const { COOKIE, ACCESS_TOKEN_SECRET } = process.env
 

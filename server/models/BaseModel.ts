@@ -66,10 +66,7 @@ export default class BaseContainer<T extends IDocument> {
   }
 
   async create(item: T, options?: RequestOptions): Promise<ItemResponse<T>> {
-    const response = await this.container.items.create<T>(
-      { ...item, createdDate: new Date(), updatedDate: new Date() },
-      options
-    )
+    const response = await this.container.items.create<T>(item, options)
 
     return response
   }

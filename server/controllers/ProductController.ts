@@ -4,10 +4,10 @@ import { Controller, Delete, Get, Patch, Post } from '@decorators/express'
 
 import { logError } from '../logger'
 
-import Products from '../models/Products'
-import PriceData from '../models/PriceData'
+import Products from '../models/price-monitor/Products'
+import PriceData from '../models/price-monitor/PriceData'
 
-import PriceDataService from '../services/PriceDataService'
+import PriceDataService from '../services/price-monitor/PriceDataService'
 
 @Controller('/api/products')
 export default class BaseController {

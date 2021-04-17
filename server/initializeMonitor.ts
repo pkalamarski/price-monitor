@@ -1,8 +1,8 @@
 import { Container } from '@decorators/di'
 import { logInfo } from './logger'
-import CrawlerService from './services/CrawlerService'
+import CrawlerService from './services/price-monitor/CrawlerService'
 
-import MonitorService from './services/MonitorService'
+import MonitorService from './services/price-monitor/MonitorService'
 
 const { ENV, PRICE_JOB_CRON_TIME } = process.env
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Controller, Get, Post } from '@decorators/express'
 
-import SiteMapping from '../models/SiteMapping'
+import SiteMapping from '../models/price-monitor/SiteMapping'
 
 @Controller('/api/mapping')
 export default class BaseController {

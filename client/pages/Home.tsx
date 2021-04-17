@@ -6,7 +6,7 @@ import { Content } from 'antd/lib/layout/layout'
 import PageLoader from '../components/PageLoader'
 
 import { IProduct } from '../../server/models/Products'
-import { IPrice, IPriceData } from '../../server/models/PriceData'
+import { IPrice, IPriceData } from '../../server/models/price-monitor/PriceData'
 
 import { shortDate } from '../../server/utility/formatDate'
 import filterPrices from '../../server/utility/filterPrices'

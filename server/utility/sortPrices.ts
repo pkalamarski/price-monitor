@@ -1,4 +1,4 @@
-import { IPrice } from '../models/PriceData'
+import { IPrice } from '../models/price-monitor/PriceData'
 
 export const getNewestPrice = (prices: IPrice[]): IPrice => {
   if (!prices?.length) return

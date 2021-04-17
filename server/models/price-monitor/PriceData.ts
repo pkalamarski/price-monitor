@@ -1,6 +1,6 @@
 import { Database } from '@azure/cosmos'
-import PriceMonitorData from '../database'
-import BaseContainer, { IDocument } from './BaseModel'
+import PriceMonitorData from '../../databases/PriceMonitorData'
+import BaseContainer, { IDocument } from '../BaseModel'
 
 export interface IPrice {
   main: number
