@@ -4,6 +4,7 @@ import PriceData, { IPriceData } from '../../models/price-monitor/PriceData'
 
 import { logVerbose } from '../../logger'
 import { getNewestPrice } from '../../utility/sortPrices'
+import filterPrices from '../../utility/filterPrices'
 
 export interface IProductOrder {
   [productId: string]: number
@@ -39,8 +40,8 @@ export default class PriceDataService {
 
     const sortedPriceData = allPriceData.sort(
       (a, b) =>
-        new Date(getNewestPrice(b.prices).date).getTime() -
-        new Date(getNewestPrice(a.prices).date).getTime()
+        new Date(getNewestPrice(filterPrices(b.prices)).date).getTime() -
+        new Date(getNewestPrice(filterPrices(a.prices)).date).getTime()
     )
 
     const orderData: IProductOrder = sortedPriceData.reduce(

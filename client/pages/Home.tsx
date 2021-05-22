@@ -5,13 +5,13 @@ import { Content } from 'antd/lib/layout/layout'
 
 import PageLoader from '../components/PageLoader'
 
-import { IProduct } from '../../server/models/Products'
+import { IProduct } from '../../server/models/price-monitor/Products'
 import { IPrice, IPriceData } from '../../server/models/price-monitor/PriceData'
 
 import { shortDate } from '../../server/utility/formatDate'
 import filterPrices from '../../server/utility/filterPrices'
 import { sortByNewest } from '../../server/utility/sortPrices'
-import { IProductOrder } from '../../server/services/PriceDataService'
+import { IProductOrder } from '../../server/services/price-monitor/PriceDataService'
 
 const { Title, Link, Text } = Typography
 
@@ -22,9 +22,8 @@ const Home: React.FC = () => {
   const [{ data: priceData, loading: priceDataLoading }] = useAxios<
     IPriceData[]
   >('/api/products/all-prices')
-  const [
-    { data: productOrder, loading: orderLoading }
-  ] = useAxios<IProductOrder>('/api/products/order')
+  const [{ data: productOrder, loading: orderLoading }] =
+    useAxios<IProductOrder>('/api/products/order')
 
   const categories = [...new Set(products?.map((p) => p.category))]
 

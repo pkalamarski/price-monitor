@@ -1,10 +1,10 @@
 import { IPrice } from '../models/price-monitor/PriceData'
-import { sortByNewest } from './sortPrices'
+import { sortByNewest, sortByOldest } from './sortPrices'
 
 const filterPrices = (prices: IPrice[]): IPrice[] => {
   if (prices.length <= 1) return prices
 
-  const sortedPrices = prices.sort(sortByNewest)
+  const sortedPrices = prices.sort(sortByOldest)
 
   const uniquePrices = sortedPrices.reduce((allPrices, price, index, array) => {
     const previousPrice = array[index - 1]
@@ -18,7 +18,7 @@ const filterPrices = (prices: IPrice[]): IPrice[] => {
     return [...allPrices, price]
   }, [])
 
-  return uniquePrices
+  return uniquePrices.sort(sortByNewest)
 }
 
 export default filterPrices
